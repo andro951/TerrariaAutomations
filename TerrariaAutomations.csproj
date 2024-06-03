@@ -1,0 +1,124 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Import tModLoader mod properties -->
+	<Import Project="..\tModLoader.targets" />
+
+	<!-- General -->
+	<PropertyGroup>
+		
+	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Content\Guidebook\Screenshots\AutoExtractinators Screenshot.PNG" />
+	  <None Remove="Items\Sprites\AdamantiteBlockBreaker.png" />
+	  <None Remove="Items\Sprites\AdamantiteBlockPlacer.png" />
+	  <None Remove="Items\Sprites\ChlorophyteBlockBreaker.png" />
+	  <None Remove="Items\Sprites\ChlorophyteBlockPlacer.png" />
+	  <None Remove="Items\Sprites\CobaltBlockBreaker.png" />
+	  <None Remove="Items\Sprites\CobaltBlockPlacer.png" />
+	  <None Remove="Items\Sprites\CopperBlockBreaker.png" />
+	  <None Remove="Items\Sprites\CopperBlockPlacer.png" />
+	  <None Remove="Items\Sprites\CrimtaneBlockBreaker.png" />
+	  <None Remove="Items\Sprites\CrimtaneBlockPlacer.png" />
+	  <None Remove="Items\Sprites\DemoniteBlockBreaker.png" />
+	  <None Remove="Items\Sprites\DemoniteBlockPlacer.png" />
+	  <None Remove="Items\Sprites\GoldBlockBreaker.png" />
+	  <None Remove="Items\Sprites\GoldBlockPlacer.png" />
+	  <None Remove="Items\Sprites\HallowedBlockBreaker.png" />
+	  <None Remove="Items\Sprites\HallowedBlockPlacer.png" />
+	  <None Remove="Items\Sprites\HellstoneAutoExtractinator.png" />
+	  <None Remove="Items\Sprites\HellstoneBlockBreaker.png" />
+	  <None Remove="Items\Sprites\HellstoneBlockPlacer.png" />
+	  <None Remove="Items\Sprites\IronBlockBreaker.png" />
+	  <None Remove="Items\Sprites\IronBlockPlacer.png" />
+	  <None Remove="Items\Sprites\LeadBlockBreaker.png" />
+	  <None Remove="Items\Sprites\LeadBlockPlacer.png" />
+	  <None Remove="Items\Sprites\LuminiteAutoExtractinator.png" />
+	  <None Remove="Items\Sprites\LuminiteBlockBreaker.png" />
+	  <None Remove="Items\Sprites\LuminiteBlockPlacer.png" />
+	  <None Remove="Items\Sprites\MeteoriteBlockBreaker.png" />
+	  <None Remove="Items\Sprites\MeteoriteBlockPlacer.png" />
+	  <None Remove="Items\Sprites\MythrilBlockBreaker.png" />
+	  <None Remove="Items\Sprites\MythrilBlockPlacer.png" />
+	  <None Remove="Items\Sprites\OrichalcumBlockBreaker.png" />
+	  <None Remove="Items\Sprites\OrichalcumBlockPlacer.png" />
+	  <None Remove="Items\Sprites\PalladiumBlockBreaker.png" />
+	  <None Remove="Items\Sprites\PalladiumBlockPlacer.png" />
+	  <None Remove="Items\Sprites\PlatinumBlockBreaker.png" />
+	  <None Remove="Items\Sprites\PlatinumBlockPlacer.png" />
+	  <None Remove="Items\Sprites\SilverBlockBreaker.png" />
+	  <None Remove="Items\Sprites\SilverBlockPlacer.png" />
+	  <None Remove="Items\Sprites\TinBlockBreaker.png" />
+	  <None Remove="Items\Sprites\TinBlockPlacer.png" />
+	  <None Remove="Items\Sprites\TitaniumBlockBreaker.png" />
+	  <None Remove="Items\Sprites\TitaniumBlockPlacer.png" />
+	  <None Remove="Items\Sprites\TungstenBlockBreaker.png" />
+	  <None Remove="Items\Sprites\TungstenBlockPlacer.png" />
+	  <None Remove="Items\Sprites\WoodAutoExtractinator.png" />
+	  <None Remove="Items\Sprites\WoodBlockBreaker.png" />
+	  <None Remove="Items\Sprites\WoodBlockPlacer.png" />
+	  <None Remove="Localization\de-DE.hjson" />
+	  <None Remove="Localization\en-US.hjson" />
+	  <None Remove="Localization\es-ES.hjson" />
+	  <None Remove="Localization\fr-FR.hjson" />
+	  <None Remove="Localization\it-IT.hjson" />
+	  <None Remove="Localization\pl-PL.hjson" />
+	  <None Remove="Localization\pt-BR.hjson" />
+	  <None Remove="Localization\ru-RU.hjson" />
+	  <None Remove="Localization\zh-Hans.hjson" />
+	  <None Remove="Tiles\AutoExtractors\ExtractinatorDust.png" />
+	  <None Remove="Tiles\AutoExtractors\ExtractinatorIndicatorDot.png" />
+	  <None Remove="Tiles\Sprites\AdamantiteBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\AdamantiteBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\ChlorophyteBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\ChlorophyteBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\CobaltBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\CobaltBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\CopperBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\CopperBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\CrimtaneBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\CrimtaneBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\DemoniteBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\DemoniteBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\GoldBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\GoldBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\HallowedBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\HallowedBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\HellstoneAutoExtractinatorTile.png" />
+	  <None Remove="Tiles\Sprites\HellstoneBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\HellstoneBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\IronBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\IronBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\LeadBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\LeadBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\LuminiteAutoExtractinatorTile.png" />
+	  <None Remove="Tiles\Sprites\LuminiteBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\LuminiteBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\MeteoriteBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\MeteoriteBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\MythrilBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\MythrilBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\OrichalcumBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\OrichalcumBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\PalladiumBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\PalladiumBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\PlatinumBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\PlatinumBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\SilverBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\SilverBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\TinBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\TinBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\TitaniumBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\TitaniumBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\TungstenBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\TungstenBlockPlacer.png" />
+	  <None Remove="Tiles\Sprites\WoodAutoExtractinatorTile.png" />
+	  <None Remove="Tiles\Sprites\WoodBlockBreaker.png" />
+	  <None Remove="Tiles\Sprites\WoodBlockPlacer.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\androLib\androLib.csproj" />
+	</ItemGroup>
+
+	<!-- References -->
+
+</Project>

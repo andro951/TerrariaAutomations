@@ -1,0 +1,4 @@
+displayName = Terraria Automations
+author = andro951
+version = 0.1.0.0
+modReferences = androLib@1.0.7.4

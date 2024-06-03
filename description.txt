@@ -1,0 +1,78 @@
+Terraria Automations is about automating simple farming tasks such as fishing and using items on an extractinator.
+This mod was origionally designed as part of my Engaged Skyblock mod, but I decided to make it it's own since the automations could be used in non-skyblock words if desired.
+
+	-Automations:
+		AutoFisher:
+			An auto fisher can be created by using a [i:498]/[i:1989] Mannequin/Wommannequin.
+			8 New Item slots:
+				-Fishing pole slot is the far left slot
+				-Bait slots all 7 other slots.
+			Fishing Gear:
+				-Dressing a Mannequin with the angler outfit or fishing accessories provides those bonuses to the auto fisher.
+			Fishing Changes:
+				-Enemies will never spawn from the auto fisher fishing.
+			Storage:
+				-Placing a chest on either side of the Mannequin will store the fished items in the chest (prioritizes the one behind them).
+				-If no chest is near, the items will spawn when they hit the Mannequin.
+
+		AutoExtractinators:
+			Auto:
+				-Right clicking on an Extractinator will open it's internal inventory (which is just a chest).  Place items in the chest for it to auto-extract them.
+				-Extracted items are pushed to chests on either side of the Extractinator, or spawned if no chests are present or they are full.
+			Wood Auto Extractinator:
+				1 extraction every 10 seconds
+				Manual use 5x slower than vanilla Extractinator
+				10% chance to recieve no item
+			Vanilla Extractinator:
+				1 extraction every second
+				Manual use (no change, 1x speed)
+			Hellstone Auto Extractinator:
+				2 extractions every second
+				Manual use speed insteased by 1.67x
+				10% chance to double extracted item stack size
+			Vanilla Chlorophyte Extractinator
+				4 extractions every second
+				Manual use (no change, 3x speed)
+				20% chance to double extracted item stack size
+			Luminite Auto Extractinator
+				10 extractions every second
+				Manual use speed increased by 5x
+				30% chance to double extracted item stack size
+
+			Item rarity:
+				If a mod uses my TerrariaAutomations.ExtractTypeSet to set up extractinator loot, the chance of getting more desireable loot is affected: (Currently doesn't support vanilla drop tables)
+					Wood: reduced by 0.65x
+					Hellstone: 1.35x
+					Vanilla Chlorophyte: 1.7x
+					Luminite: 2.05x
+
+		Block Breakers/Placers:
+			What are they good for?
+				They only break/place the block in front of them, so in general, they aren't very useful with only vanilla content.
+				Mods that have tile changing affects such as my mod, Engaged Skyblock, can make much better use of this becase you can place a block, it will change then break it.
+				In Engaged Skyblock, I also changed liquid mechanics to allow for a Minecraft style stone block generator, so the breakers are very good for that.
+
+		Block Breakers:
+			Break the block they are facing repeatedly. (2 red or green dots are the side they will break a block on.)
+			Higher tier block breakers have a higher pickaxe power and attempt to break block faster.
+			If wire is placed on them, they will only activate when the wire is on.
+			Left clicking them with a hammer will rotate them.
+
+		Block Placers:
+			Place blocks from a chest they are touching in front of them.  Facing direction same as Block Breakers but cyan dots.
+			Higher tier block placers place blocks more often.
+			If wire is placed on them, they will only activate when the wire is on.
+			Left clicking them with a hammer will rotate them.
+
+		Chest Indicators:
+			Chests that are being used as an output/input to the automation tiles have 2 indicators.
+				-Left indicator is the total number of items.  Sum of all items compaired / sum of all item max stacks.
+				-Right indicator is the slots filled.  slots filled / 40 (chest size)
+
+		Wiring:
+			All automation tiles are compatible with wiring.  Placing a wire on them will pause them.  When the wire is activated, they will do 1 operation.
+			This allows timers to work as on/off switches if desired, or you can do some timing with block breakers/placers for tile conversions.
+
+	-Recipies:
+		Extractinator [i:997]: [Anvil] 20 Iron/Lead bar [i:22]/[i:704] + Wood Auto Extractinator
+		Chlorophyte Extractinator [i:5296]: [Mythril Anvil] 20 Chlorophyte Bar [i:1006] + Hellstone Auto Extractinator
