@@ -23,7 +23,7 @@ namespace TerrariaAutomations
 		public static TA_Mod Instance;
 		public const string ModName = "TerrariaAutomations";
 		public static TA_ClientConfig clientConfig = ModContent.GetInstance<TA_ClientConfig>();
-		//public static TA_ServerConfig serverConfig = ModContent.GetInstance<TA_ServerConfig>();
+		public static TA_ServerConfig serverConfig = ModContent.GetInstance<TA_ServerConfig>();
 
 		private static List<Hook> hooks = new();
 		public override void Load() {

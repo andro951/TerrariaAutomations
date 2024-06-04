@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using TerrariaAutomations.Common.Globals;
 using static TerrariaAutomations.TA_Mod;
@@ -11,7 +12,8 @@ using static TerrariaAutomations.TA_Mod;
 namespace TerrariaAutomations {
 	internal class TA_ModPlayer : ModPlayer {
 		public override void OnEnterWorld() {
-			AutoFisherTE.SendAllAutoFisherTEsRequest();
+			if (Main.netMode == NetmodeID.MultiplayerClient)
+				AutoFisherTE.SendAllAutoFisherTEsRequest();
 		}
 	}
 }

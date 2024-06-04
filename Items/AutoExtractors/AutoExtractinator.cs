@@ -23,6 +23,7 @@ namespace TerrariaAutomations.Items {
 		public override string Designer => "andro951";
 		public override List<WikiTypeID> WikiItemTypes => new() { WikiTypeID.Mechanism, WikiTypeID.Storage };
 		public override void SetStaticDefaults() {
+            base.SetStaticDefaults();
             Item.ResearchUnlockCount = 1;
         }
         public override void SetDefaults() {

@@ -16,22 +16,28 @@ using Terraria.Enums;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
+using Terraria.UI;
+using androLib.Tiles;
 
 namespace TerrariaAutomations.Tiles {
-	public abstract class BlockPlacer : ModTile {
+	public abstract class BlockPlacer : AndroModTile {
 		public abstract int cooldown { get; }
 		protected virtual Color MapColor => Color.Gray;
 		protected ModTileEntity Entity => ModContent.GetInstance<BlockPlacerTE>();
+		protected override bool IsValidSolidReplaceTile => true;
 		public override void SetStaticDefaults() {
 			base.SetStaticDefaults();
 			TileID.Sets.DrawsWalls[Type] = true;
 			TileID.Sets.DontDrawTileSliced[Type] = true;
 			TileID.Sets.IgnoresNearbyHalfbricksWhenDrawn[Type] = true;
+			TileID.Sets.CanBeSloped[Type] = true;
 
 			Main.tileLavaDeath[Type] = false;
 			Main.tileFrameImportant[Type] = true;
-			Main.tileSolid[Type] = true;
-			Main.tileBlockLight[Type] = true;
+			if (TA_Mod.serverConfig.BlockPlacersAndBreakersSolidTiles) {
+				Main.tileSolid[Type] = true;
+				Main.tileBlockLight[Type] = true;
+			}
 
 			Color mapColor = MapColor;
 			mapColor.A = byte.MaxValue;
@@ -46,9 +52,20 @@ namespace TerrariaAutomations.Tiles {
 		}
 
 		public override string Texture => (GetType().Namespace + ".Sprites." + Name).Replace('.', '/');
+		protected override void OnTileObjectDrawPreview(short x, short y, TileObjectPreviewData op) {
+			Main.LocalPlayer.GetDirectionID(op.Coordinates.X, op.Coordinates.Y, out short directionID);
+
+			if (ItemSlot.ShiftInUse)
+				directionID = (short)((directionID + 2) % 4);
+
+			op.Style = directionID;
+		}
 		public override void PlaceInWorld(int i, int j, Item item) {
 			Tile tile = Main.tile[i, j];
 			Main.LocalPlayer.GetDirectionID(i, j, out short directionID);
+
+			if (ItemSlot.ShiftInUse)
+				directionID = (short)((directionID + 2) % 4);
 
 			SetTileDirection(tile, directionID);
 			Entity.Hook_AfterPlacement(i, j, tile.TileType, 0, 0, 0);
@@ -65,12 +82,11 @@ namespace TerrariaAutomations.Tiles {
 		}
 		private void SetTileDirection(Tile tile, short directionID) {
 			tile.TileFrameX = (short)(directionID * 18);
+			tile.TileFrameY = 0;
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.SendTileSquare(-1, Player.tileTargetX, Player.tileTargetY, 1, TileChangeType.None);
 		}
 
-		private int sendCounter = 0;
-		private const int sendCounterReset = 60;
 		public static void SendChestDatas(int x, int y) {
 			GetChests(x, y, out List<int> storageChests);
 			foreach (int chestId in storageChests) {
@@ -97,13 +113,16 @@ namespace TerrariaAutomations.Tiles {
 					storageChests.Add(chestNum);
 			}
 		}
+		private static bool CanPlaceOnTile(Tile tile) => !tile.HasTile || Main.tileCut[tile.TileType];
 		public override void HitWire(int i, int j) {
 			int placerFacingDirection = GetDirectionID(i, j);
 			PathDirectionID.GetDirection(placerFacingDirection, i, j, out int x, out int y);
+			if (x < 0 || x > Main.maxTilesX - 1 || y < 0 || y > Main.maxTilesY - 1)
+				return;
+
 			Tile target = Main.tile[x, y];
 
-			if (target.HasTile)
-				return;
+			bool saplingOnly = !CanPlaceOnTile(target) && placerFacingDirection == PathDirectionID.Up;
 
 			GetChests(i, j, out List<int> storageChests);
 			
@@ -114,20 +133,51 @@ namespace TerrariaAutomations.Tiles {
 				return;
 
 			//Select Block to place
-			int tileToPlace = -1;
+			Item itemToPlace = null;
 			foreach (int chestNum in storageChests) {
 				if (Main.netMode != NetmodeID.SinglePlayer && Chest.UsingChest(chestNum) > -1)
 					continue;
 
-				if (SelectPlacableBlockAndConsumeItem(chestNum, out tileToPlace))
+				if (SelectPlacableBlock(chestNum, saplingOnly, out Item item)) {
+					itemToPlace = item;
 					break;
+				}
 			}
 
-			if (tileToPlace != -1)
-				AndroUtilityMethods.PlaceTile(x, y, tileToPlace);
+			if (itemToPlace != null) {
+				PathDirectionID.GetDirection(placerFacingDirection, x, y, out int x2, out int y2);
+				bool CanUse2ndTileValues = x2 >= 0 && x2 <= Main.maxTilesX - 1 && y2 >= 0 && y2 <= Main.maxTilesY - 1;
+				if (CanUse2ndTileValues) {
+					Tile target2 = Main.tile[x2, y2];
+					if (!CanPlaceOnTile(target2) && (TileID.Sets.CommonSapling[target2.TileType] || TileID.Sets.TreeSapling[target2.TileType]))
+						return;//Don't place a block right next to a sapling.
+				}
+
+				if (TileID.Sets.CommonSapling[itemToPlace.createTile] || TileID.Sets.TreeSapling[itemToPlace.createTile]) {
+					if (CanUse2ndTileValues) {
+						Tile target2 = Main.tile[x2, y2];
+						if (CanPlaceOnTile(target2)) {
+							x = x2;//Place sapling 2 blocks away.
+							y = y2;
+						}
+						else {
+							return;//Don't place sapling 1 block away
+						}
+					}
+				}
+
+				AndroUtilityMethods.PlaceTile(x, y, itemToPlace);
+				Tile tile = Main.tile[x, y];
+				if (tile.HasTile && tile.TileType == itemToPlace.createTile) {
+					itemToPlace.stack--;
+					if (itemToPlace.stack <= 0)
+						itemToPlace.TurnToAir();
+				}
+			}
+				
 		}
-		private static bool SelectPlacableBlockAndConsumeItem(int chestNum, out int tileType) {
-			tileType = -1;
+		private static bool SelectPlacableBlock(int chestNum, bool saplingOnly, out Item itemToPlace) {
+			itemToPlace = null;
 			foreach (Item item in Main.chest[chestNum].item) {
 				if (item.NullOrAir() || item.stack < 1)
 					continue;
@@ -136,15 +186,19 @@ namespace TerrariaAutomations.Tiles {
 				if (createTile == -1)
 					continue;
 
+				bool sapling = false;
 				TileObjectData data = TileObjectData.GetTileData(createTile, 0);
-				if (data != null && (data.Width > 1 || data.Height > 1))
+				if (data != null && (data.Width > 1 || data.Height > 1)) {
+					sapling = TileID.Sets.CommonSapling[createTile] || TileID.Sets.TreeSapling[createTile];
+					if (!sapling)
+						continue;
+				}
+
+				if (saplingOnly && !sapling)
 					continue;
 
-				item.stack--;
-				if (item.stack <= 0)
-					item.TurnToAir();
+				itemToPlace = item;
 
-				tileType = createTile;
 				return true;
 			}
 

@@ -1402,10 +1402,12 @@ namespace TerrariaAutomations.Common.Globals {
 
 			item.newAndShiny = true;
 
+			item.position.X = projectile.Center.X - (float)(item.width / 2);
+			item.position.Y = projectile.Center.Y - (float)(item.height / 2);
 			if (projectile.TryGetAutoFisher(out AutoFisherTE autoFisherTE)) {
 				autoFisherTE.GetChests(out List<int> storageChests);
 				foreach (int chestNum in storageChests) {
-					if (Main.chest[chestNum].item.Deposit(item, out _))
+					if (Main.chest[chestNum].DepositVisualizeChestTransfer(item))
 						break;
 				}
 			}
@@ -1417,8 +1419,6 @@ namespace TerrariaAutomations.Common.Globals {
 					NetMessage.SendData(21, -1, -1, null, number, 1f);
 			}
 			else {
-				item.position.X = projectile.Center.X - (float)(item.width / 2);
-				item.position.Y = projectile.Center.Y - (float)(item.height / 2);
 				item.active = true;
 				PopupText.NewText(PopupTextContext.RegularItemPickup, item, 0);
 			}
@@ -1723,7 +1723,7 @@ namespace TerrariaAutomations.Common.Globals {
 				if (!tile.HasTile)
 					continue;
 
-				if (!GlobalChest.ValidTileTypeForStorageChest(tile.TileType))
+				if (!GlobalChest.ValidTileTypeForStorageChestIncludeExtractinators(tile.TileType))
 					continue;
 				
 				if (AndroUtilityMethods.TryGetChest(checkX, checkY, out int chestNum))

@@ -110,7 +110,7 @@ namespace TerrariaAutomations.Common.Globals
 
 			if (!found) {
 				if (remove && Main.netMode == NetmodeID.MultiplayerClient) {
-					int chestLocaion = GlobalChestStaticMethods.PositionValue(chestX, chestY);
+					int chestLocaion = AndroUtilityMethods.PositionValue(chestX, chestY);
 					ChestPercentFullInfo.Remove(chestLocaion);
 				}
 
@@ -130,10 +130,28 @@ namespace TerrariaAutomations.Common.Globals
 			if (GlobalAutoExtractor.IsExtractinator(tileType))
 				return false;
 
+			if (Main.tileContainer[tileType])
+				return true;
+
 			switch (tileType) {
 				case TileID.Containers:
 				case TileID.Containers2:
 				case TileID.Dressers:
+					return true;
+				default:
+					return false;
+			}
+		}
+		public static bool ValidTileTypeForStorageChestIncludeExtractinators(int tileType) {
+			if (Main.tileContainer[tileType])
+				return true;
+
+			switch (tileType) {
+				case TileID.Containers:
+				case TileID.Containers2:
+				case TileID.Dressers:
+				case TileID.Extractinator:
+				case TileID.ChlorophyteExtractinator:
 					return true;
 				default:
 					return false;
@@ -156,7 +174,7 @@ namespace TerrariaAutomations.Common.Globals
 		}
 		private bool TryGetChestFill(int x, int y, out float stackPercentFull, out float slotsPercentFull) {
 			if (Main.netMode == NetmodeID.MultiplayerClient) {
-				if (ChestPercentFullInfo.TryGetValue(GlobalChestStaticMethods.PositionValue(x, y), out ChestIndicatorInfo info)) {
+				if (ChestPercentFullInfo.TryGetValue(AndroUtilityMethods.PositionValue(x, y), out ChestIndicatorInfo info)) {
 					stackPercentFull = info.StackPercentFull;
 					slotsPercentFull = info.SlotsPercentFull;
 					return true;
@@ -218,7 +236,7 @@ namespace TerrariaAutomations.Common.Globals
 			List<int> toRemove = new();
 			for (int i = 0; i < numThisTick;) {
 				foreach (int v in ChestPercentFullInfo.Keys) {
-					Point16 p = GlobalChestStaticMethods.ValueToPosition(v);
+					Point16 p = v.ValueToPosition();
 					if (!foundFirst) {
 						if (v < lastSent) {
 							continue;
@@ -260,7 +278,7 @@ namespace TerrariaAutomations.Common.Globals
 
 			Item[] inv = chest.item;
 			inv.PercentFull(out float stackPercentFull, out float slotsPercentFull);
-			int v = GlobalChestStaticMethods.PositionValue(chest.x, chest.y);
+			int v = AndroUtilityMethods.PositionValue(chest.x, chest.y);
 			if (ChestPercentFullInfo.ContainsKey(v)) {
 				ChestPercentFullInfo[v] = new(stackPercentFull, slotsPercentFull);
 			}
@@ -272,7 +290,7 @@ namespace TerrariaAutomations.Common.Globals
 	public struct ChestIndicatorInfo {
 		public float StackPercentFull;
 		public float SlotsPercentFull;
-		private static byte FloatToByte(float f) => (byte)(f * byte.MaxValue);
+		private static byte FloatToByte(float f) => f == 0f ? (byte)0 : byte.Max((byte)1, (byte)(f * byte.MaxValue));
 		private static float ByteToFloat(byte b) => b / (float)byte.MaxValue;
 		public void WriteAndSendChestLocation(Point16 location) {
 			//$"Send Chest Indicator: {location}, {this}".LogSimple();
@@ -287,7 +305,7 @@ namespace TerrariaAutomations.Common.Globals
 		public static void Read(BinaryReader reader) {
 			int x = reader.ReadInt16();
 			int y = reader.ReadInt16();
-			int v = GlobalChestStaticMethods.PositionValue(x, y);
+			int v = AndroUtilityMethods.PositionValue(x, y);
 			ChestIndicatorInfo info = new ChestIndicatorInfo(reader);
 			//$"Read ChestInfo: ({x}, {y}), {info}".LogSimpleNT();
 			if (GlobalChest.ChestPercentFullInfo.ContainsKey(v)) {
@@ -310,12 +328,6 @@ namespace TerrariaAutomations.Common.Globals
 		}
 	}
 	public static class GlobalChestStaticMethods {
-		public static int PositionValue(this Point16 p) => PositionValue(p.X, p.Y);
-		public static int PositionValue(int x, int y) => x + y * Main.maxTilesX;
-		internal static Point16 ValueToPosition(this int v) {
-			int y = v / Main.maxTilesX;
-			int x = v % Main.maxTilesX;
-			return new Point16(x, y);
-		}
+
 	}
 }

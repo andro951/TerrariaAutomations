@@ -1,5 +1,5 @@
 Terraria Automations is about automating simple farming tasks such as fishing and using items on an extractinator.
-This mod was origionally designed as part of my Engaged Skyblock mod, but I decided to make it it's own since the automations could be used in non-skyblock words if desired.
+This mod was originally designed as part of my Engaged Skyblock mod, but I decided to make it it's own since the automations could be used in non-skyblock words if desired.
 
 	-Automations:
 		AutoFisher:

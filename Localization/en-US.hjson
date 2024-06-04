@@ -679,6 +679,28 @@ Mods: {
 					Tooltip: ""
 				}
 			}
+
+			TA_ClientConfig: {
+				DisplayName: T A_ Client Config
+
+				DisplayChestIndicators: {
+					Label: Display Chest Indicators
+					Tooltip: ""
+				}
+			}
+
+			TerrariaAutomationsClientConfig.DisplaySettings: Display Chest Indicators Header
+
+			TA_ServerConfig: {
+				DisplayName: T A_ Server Config
+
+				BlockPlacersAndBreakersSolidTiles: {
+					Label: Block Placers And Breakers Solid Tiles
+					Tooltip: ""
+				}
+			}
+
+			TerrariaAutomationsServerConfig.AutomationTileSettings: Block Placers And Breakers Solid Tiles Header
 		}
 	}
 }

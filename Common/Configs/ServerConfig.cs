@@ -11,11 +11,18 @@ using Terraria;
 
 namespace TerrariaAutomations.Common.Configs
 {
-	//public class TA_ServerConfig : ModConfig {
-	//	public override ConfigScope Mode => ConfigScope.ServerSide;
+	public class TA_ServerConfig : ModConfig {
+		public const string ClientConfigName = "TerrariaAutomationsServerConfig";
+		public override ConfigScope Mode => ConfigScope.ServerSide;
 
-		
-	//}
+		[JsonIgnore]
+		public const string AutomationTileSettings = "AutomationTileSettings";
+		[Header($"$Mods.{TA_Mod.ModName}.{L_ID_Tags.Configs}.{ClientConfigName}.{AutomationTileSettings}")]
+
+		[DefaultListValue(true)]
+		[ReloadRequired]
+		public bool BlockPlacersAndBreakersSolidTiles;
+	}
 
 	public class TA_ClientConfig : ModConfig {
 		public const string ClientConfigName = "TerrariaAutomationsClientConfig";

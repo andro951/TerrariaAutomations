@@ -17,9 +17,12 @@ using Terraria.ObjectData;
 using static Terraria.HitTile;
 using TerrariaAutomations.Common.Globals;
 using androLib.Common.Globals;
+using TerrariaAutomations.Items;
+using Terraria.UI;
+using androLib.Tiles;
 
 namespace TerrariaAutomations.Tiles {
-	public abstract class BlockBreaker : ModTile {
+	public abstract class BlockBreaker : AndroModTile {
 		protected class PickaxePowerID {
 			public const int Wood = 1;
 
@@ -47,16 +50,20 @@ namespace TerrariaAutomations.Tiles {
 		public abstract int miningCooldown { get; }
 		protected virtual Color MapColor => Color.Gray;
 		protected ModTileEntity Entity => ModContent.GetInstance<BlockBreakerTE>();
+		protected override bool IsValidSolidReplaceTile => true;
 		public override void SetStaticDefaults() {
 			base.SetStaticDefaults();
 			TileID.Sets.DrawsWalls[Type] = true;
 			TileID.Sets.DontDrawTileSliced[Type] = true;
 			TileID.Sets.IgnoresNearbyHalfbricksWhenDrawn[Type] = true;
+			TileID.Sets.CanBeSloped[Type] = true;
 
 			Main.tileLavaDeath[Type] = false;
 			Main.tileFrameImportant[Type] = true;
-			Main.tileSolid[Type] = true;
-			Main.tileBlockLight[Type] = true;
+			if (TA_Mod.serverConfig.BlockPlacersAndBreakersSolidTiles) {
+				Main.tileSolid[Type] = true;
+				Main.tileBlockLight[Type] = true;
+			}
 
 			Color mapColor = MapColor;
 			mapColor.A = byte.MaxValue;
@@ -70,78 +77,109 @@ namespace TerrariaAutomations.Tiles {
 			TileObjectData.addTile(Type);
 		}
 		public override void Load() {
-			On_TileObject.DrawPreview += On_TileObject_DrawPreview;
-			On_Player.UpdatePlacementPreview += On_Player_UpdatePlacementPreview;
-			On_TileObjectData.CustomPlace += On_TileObjectData_CustomPlace;
-			On_WorldGen.KillTile_GetItemDrops += On_WorldGen_KillTile_GetItemDrops;
+			//On_WorldGen.KillTile_GetItemDrops += On_WorldGen_KillTile_GetItemDrops;
+			On_WorldGen.EmptyTileCheck += On_WorldGen_EmptyTileCheck;
 		}
 
-		private static bool updatePlacementPreview = false;
-		private void On_Player_UpdatePlacementPreview(On_Player.orig_UpdatePlacementPreview orig, Player self, Item sItem) {
-			if (sItem.createTile != -1) {
-				ModTile modTile = ModContent.GetModTile(sItem.createTile);
-				if (modTile is Tiles.BlockBreaker or Tiles.BlockPlacer) {
-					updatePlacementPreview = true;
-				}
+		internal static void OnSpawn(Item item, IEntitySource context) {
+			if (breakingTree)
+				TryDepositVisualizeChestTransfer(item, blockBreakerX, blockBreakerY);
+		}
+
+		private static bool TryDepositVisualizeChestTransfer(Item item, int x, int y) {
+			Tile blockBreakerTile = Main.tile[blockBreakerX, blockBreakerY];
+			ModTile modTile = TileLoader.GetTile(blockBreakerTile.TileType);
+			if (modTile is not BlockBreaker)
+				return false;
+
+			GetChests(x, y, out List<int> storageChests);
+			foreach (int chestNum in storageChests) {
+				Chest chest = Main.chest[chestNum];
+				if (chest.DepositVisualizeChestTransfer(item))
+					break;
 			}
-			
-			orig(self, sItem);
-			updatePlacementPreview = false;
+
+			return true;
 		}
 
-		private bool On_TileObjectData_CustomPlace(On_TileObjectData.orig_CustomPlace orig, int type, int style) {
-			if (updatePlacementPreview)
+		private bool On_WorldGen_EmptyTileCheck(On_WorldGen.orig_EmptyTileCheck orig, int startX, int endX, int startY, int endY, int ignoreID) {
+			if (TileID.Sets.CommonSapling[ignoreID]) {
+				if (startX < 0)
+					return false;
+
+				if (endX >= Main.maxTilesX)
+					return false;
+
+				if (startY < 0)
+					return false;
+
+				if (endY >= Main.maxTilesY)
+					return false;
+
+				bool flag = false;
+				if (ignoreID != -1 && TileID.Sets.CommonSapling[ignoreID])
+					flag = true;
+
+				for (int i = startX; i < endX + 1; i++) {
+					for (int j = startY; j < endY + 1; j++) {
+						if (!Main.tile[i, j].HasTile)
+							continue;
+
+						if (j == endY && int.Abs(i - (startX + endX) / 2) == 2 && TileLoader.GetTile(Main.tile[i, j].TileType) is BlockBreaker or BlockPlacer)
+							continue;
+
+						switch (ignoreID) {
+							case -1:
+								return false;
+							case 11: {
+								ushort type = Main.tile[i, j].TileType;
+								if (type == 11)
+									continue;
+
+								return false;
+							}
+							case 71: {
+								ushort type = Main.tile[i, j].TileType;
+								if (type == 71)
+									continue;
+
+								return false;
+							}
+						}
+
+						if (flag) {
+							if (TileID.Sets.CommonSapling[Main.tile[i, j].TileType])
+								break;
+
+							if (TileID.Sets.IgnoredByGrowingSaplings[Main.tile[i, j].TileType])
+								continue;
+
+							return false;
+						}
+					}
+				}
+
 				return true;
-
-			return orig(type, style);
-		}
-		private void On_WorldGen_KillTile_GetItemDrops(On_WorldGen.orig_KillTile_GetItemDrops orig, int x, int y, Tile tileCache, out int dropItem, out int dropItemStack, out int secondaryItem, out int secondaryItemStack, bool includeLargeObjectDrops) {
-			orig(x, y, tileCache, out dropItem, out dropItemStack, out secondaryItem, out secondaryItemStack, includeLargeObjectDrops);
-			if (dropItem <= ItemID.None && secondaryItem <= ItemID.None)
-				return;
-
-			//Intentionally allowed even if not SkyblockWorld
-			if (breakingTileX == x && breakingTileY == y) {
-				GetChests(blockBreakerX, blockBreakerY, out List<int> storageChests);
-				if (dropItem > ItemID.None) {
-					foreach (int chestNum in storageChests) {
-						if (Main.netMode != NetmodeID.SinglePlayer && Chest.UsingChest(chestNum) > -1)
-							continue;
-
-						if (chestNum.TryDepositToChest(dropItem, ref dropItemStack)) {
-							dropItem = ItemID.None;
-							break;
-						}
-					}
-				}
-
-				if (secondaryItem > ItemID.None) {
-					foreach (int chestNum in storageChests) {
-						if (Main.netMode != NetmodeID.SinglePlayer && Chest.UsingChest(chestNum) > -1)
-							continue;
-
-						if (chestNum.TryDepositToChest(secondaryItem, ref secondaryItemStack)) {
-							secondaryItem = ItemID.None;
-							break;
-						}
-					}
-				}
-			}
-		}
-		private void On_TileObject_DrawPreview(On_TileObject.orig_DrawPreview orig, SpriteBatch sb, TileObjectPreviewData op, Vector2 position) {
-			ModTile modTile = ModContent.GetModTile(op.Type);
-			if (modTile is Tiles.BlockBreaker or Tiles.BlockPlacer) {
-				Main.LocalPlayer.GetDirectionID(op.Coordinates.X, op.Coordinates.Y, out short directionID);
-				op.Style = directionID;
 			}
 
-			orig(sb, op, position);
+			return orig(startX, endX, startY, endY, ignoreID);
+		}
+		protected override void OnTileObjectDrawPreview(short x, short y, TileObjectPreviewData op) {
+			Main.LocalPlayer.GetDirectionID(op.Coordinates.X, op.Coordinates.Y, out short directionID);
+
+			if (ItemSlot.ShiftInUse)
+				directionID = (short)((directionID + 2) % 4);
+
+			op.Style = directionID;
 		}
 
 		public override string Texture => (GetType().Namespace + ".Sprites." + Name).Replace('.', '/');
 		public override void PlaceInWorld(int i, int j, Item item) {
 			Tile tile = Main.tile[i, j];
 			Main.LocalPlayer.GetDirectionID(i, j, out short directionID);
+
+			if (ItemSlot.ShiftInUse)
+				directionID = (short)((directionID + 2) % 4);
 
 			SetTileDirection(tile, directionID);
 			Entity.Hook_AfterPlacement(i, j, tile.TileType, 0, 0, 0);
@@ -158,11 +196,13 @@ namespace TerrariaAutomations.Tiles {
 		}
 		private void SetTileDirection(Tile tile, short directionID) {
 			tile.TileFrameX = (short)(directionID * 18);
+			tile.TileFrameY = 0;
 			if (Main.netMode == NetmodeID.MultiplayerClient)
 				NetMessage.SendTileSquare(-1, Player.tileTargetX, Player.tileTargetY, 1, TileChangeType.None);
 		}
 
 		protected HitTileObject hitData = new();
+		private static bool breakingTree = false;
 		private static int breakingTileX;
 		private static int breakingTileY;
 		private static int blockBreakerX;
@@ -173,7 +213,7 @@ namespace TerrariaAutomations.Tiles {
 				GlobalChest.MarkIndicatorChest(chestId);
 			}
 		}
-		private static void GetChests(int x, int y, out List<int> storageChests) {
+		public static void GetChests(int x, int y, out List<int> storageChests) {
 			int breakerFacingDirection = GetDirectionID(x, y);
 			storageChests = new();
 			for (int directionID = 0; directionID < 4; directionID++) {
@@ -185,7 +225,7 @@ namespace TerrariaAutomations.Tiles {
 				if (!tile.HasTile)
 					continue;
 
-				if (!GlobalChest.ValidTileTypeForStorageChest(tile.TileType))
+				if (!GlobalChest.ValidTileTypeForStorageChestIncludeExtractinators(tile.TileType))
 					continue;
 
 				Point16 chestTopLeft = AndroUtilityMethods.TilePositionToTileTopLeft(chestX, chestY);
@@ -193,41 +233,68 @@ namespace TerrariaAutomations.Tiles {
 					storageChests.Add(chestNum);
 			}
 		}
+
 		public override void HitWire(int i, int j) {
 			Tile tile = Main.tile[i, j];
 			int directionID = tile.TileFrameX / 18;
 			PathDirectionID.GetDirection(directionID, i, j, out int x, out int y);
-			Tile target = Main.tile[x, y];
-			if (!WorldGen.CanKillTile(x, y))
+			if (x < 0 || x > Main.maxTilesX - 1 || y < 0 || y > Main.maxTilesY - 1)
 				return;
 
-			if (target.HasTile) {
-				if (!Wiring.CheckMech(i, j, miningCooldown))
-					return;
+			if (!Wiring.CheckMech(i, j, miningCooldown))
+				return;
 
-				if (Main.tileContainer[target.TileType] || TileID.Sets.BasicChest[target.TileType])
-					return;
+			Tile target = Main.tile[x, y];
+			bool shouldBreak = target.HasTile && WorldGen.CanKillTile(x, y);
 
-				bool fail = pickaxePower < GenericGlobalTile.GetRequiredPickaxePower(target.TileType);
-
-				breakingTileX = x;
-				breakingTileY = y;
-				blockBreakerX = i;
-				blockBreakerY = j;
-				WorldGen.KillTile(x, y, fail);
-				if (Main.netMode != NetmodeID.SinglePlayer)
-					NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, x, y);
-
-				breakingTileX = -1;
-				breakingTileY = -1;
+			bool tree = false;
+			if (!shouldBreak) {
+				PathDirectionID.GetDirection(directionID, x, y, out int x2, out int y2);
+				if (x2 >= 0 && x2 <= Main.maxTilesX - 1 && y2 >= 0 && y2 <= Main.maxTilesY - 1) {
+					Tile target2 = Main.tile[x2, y2];
+					if (target2.HasTile && TileID.Sets.IsATreeTrunk[target2.TileType] && WorldGen.CanKillTile(x2, y2)) {
+						x = x2;
+						y = y2;
+						shouldBreak = true;
+						tree = true;
+					}
+				}
+			}
+			else {
+				tree = TileID.Sets.IsATreeTrunk[target.TileType];
 			}
 
-			//Show drill
+			if (!shouldBreak)
+				return;
 
+			if (Main.tileContainer[target.TileType] || TileID.Sets.BasicChest[target.TileType])
+				return;
 
+			if (TileID.Sets.CommonSapling[target.TileType] || TileID.Sets.TreeSapling[target.TileType])
+				return;
+
+			bool fail = pickaxePower < GenericGlobalTile.GetRequiredPickaxePower(target.TileType);
+
+			breakingTree = tree;
+			breakingTileX = x;
+			breakingTileY = y;
+			blockBreakerX = i;
+			blockBreakerY = j;
+			WorldGen.KillTile(x, y, fail);
+			if (Main.netMode != NetmodeID.SinglePlayer)
+				NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, x, y);
+
+			breakingTree = false;
+			breakingTileX = -1;
+			breakingTileY = -1;
 		}
 		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
 			Entity.Kill(i, j);
+		}
+	}
+	public class BlockBreakerGlobalItem : GlobalItem {
+		public override void OnSpawn(Item item, IEntitySource source) {
+			BlockBreaker.OnSpawn(item, source);
 		}
 	}
 }
