@@ -75,7 +75,7 @@ This mod was originally designed as part of my Engaged Skyblock mod, but I decid
 
 		Pipes:
 			Pipes are similar to vanilla wire.  They are placed with a Pipe Wrench (Right click with a Pipe Wrench to remove.)
-			Pipes connect chests and automation tiles together to form a stroage network.  Automations tiles will use chests in the network for storing/using items.
+			Pipes connect chests and automation tiles together to form a storage network.  Automations tiles will use chests in the network for storing/using items.
 			Pipes are compatible with vanilla Junction Boxes.
 			Pipes and the Pipe Wrench are sold by the Mechanic.  Pipes can also be crafted from iron/lead bars.
 
