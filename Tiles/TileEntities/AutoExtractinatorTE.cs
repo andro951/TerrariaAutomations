@@ -15,6 +15,7 @@ using System;
 using TerrariaAutomations.Common.Globals;
 using TerrariaAutomations.Tiles.Interfaces;
 using Terraria.UI;
+using TerrariaAutomations.TileData.Pipes;
 
 namespace TerrariaAutomations.Tiles.TileEntities
 {
@@ -110,11 +111,15 @@ namespace TerrariaAutomations.Tiles.TileEntities
 		internal void OnHitWire(int x, int y) {
 			if (TryGetMyChest(out int chestNum)) {
                 if (Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(chestNum) == -1) {
-					Item[] extractinatorInv = Main.chest[chestNum].item;
+					IList<Item> extractinatorInv = Main.chest[chestNum].item;
 					int i = 0;
 					GetChests(out List<int> storageChests);
+					IEnumerable<IList<Item>> inventories = storageChests.Where(c => Main.chest[c] != null && (Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(c) == -1)).Select(c => Main.chest[c].item);
+                    if (StorageNetwork.TryGetStorageInventories(Position.X, Position.Y, out List<StorageInfo> storages))
+                        inventories = inventories.Concat(storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory));
+
 					for (int z = 0; z < ConsumeMultiplier; z++) {
-						for (; i < extractinatorInv.Length; i++) {
+						for (; i < extractinatorInv.Count; i++) {
 							Item item = extractinatorInv[i];
 							if (item.NullOrAir())
 								continue;
@@ -133,7 +138,6 @@ namespace TerrariaAutomations.Tiles.TileEntities
 
 							ExtractionItem.AutoExtractinatorUse(extractinatorMode, TileToBeValidOn, out int type, out int stack);
 
-							IEnumerable<Item[]> inventories = storageChests.Where(c => Main.chest[c] != null && (Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(c) == -1)).Select(c => Main.chest[c].item);
 							TryRemovingMyJunk(extractinatorInv, inventories);
 							TryDepositToChest(inventories, type, ref stack);
 
@@ -147,7 +151,7 @@ namespace TerrariaAutomations.Tiles.TileEntities
 			}
 		}
 
-		private void TryRemovingMyJunk(Item[] myChestInv, IEnumerable<Item[]> inventories) {
+		private void TryRemovingMyJunk(IList<Item> myChestInv, IEnumerable<IList<Item>> inventories) {
             if (junkInMyChest == false)
                 return;
 
@@ -163,7 +167,7 @@ namespace TerrariaAutomations.Tiles.TileEntities
                     continue;
 
                 bool deposited = false;
-                foreach (Item[] inv in inventories) {
+                foreach (IList<Item> inv in inventories) {
 					if (inv.Deposit(item, out int _)) {
                         deposited = true;
 						break;
@@ -175,7 +179,7 @@ namespace TerrariaAutomations.Tiles.TileEntities
             }
 		}
 
-		private void TryDepositToChest(IEnumerable<Item[]> inventories, int itemType, ref int stack)
+		private void TryDepositToChest(IEnumerable<IList<Item>> inventories, int itemType, ref int stack)
         {
             if (itemType <= ItemID.None)
                 return;
@@ -192,7 +196,7 @@ namespace TerrariaAutomations.Tiles.TileEntities
                 }
 
                 bool deposited = false;
-                foreach (Item[] inv in inventories) {
+                foreach (IList<Item> inv in inventories) {
                     if (inv == null)
                         continue;
 
@@ -205,7 +209,7 @@ namespace TerrariaAutomations.Tiles.TileEntities
                 if (!deposited) {
 					int chest = GetChestID();
 					if (chest != -1 && (Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(chest) == -1)) {
-                        Item[] inv = Main.chest[chest]?.item;
+						IList<Item> inv = Main.chest[chest]?.item;
                         if (inv != null) {
                             if (inv.Deposit(item, out int junkAmount))
 								deposited = true;

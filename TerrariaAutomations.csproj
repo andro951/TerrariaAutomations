@@ -5,7 +5,7 @@
 
 	<!-- General -->
 	<PropertyGroup>
-		
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Content\Guidebook\Screenshots\AutoExtractinators Screenshot.PNG" />
@@ -30,6 +30,7 @@
 	  <None Remove="Items\Sprites\HellstoneBlockPlacer.png" />
 	  <None Remove="Items\Sprites\IronBlockBreaker.png" />
 	  <None Remove="Items\Sprites\IronBlockPlacer.png" />
+	  <None Remove="Items\Sprites\Item_509.png" />
 	  <None Remove="Items\Sprites\LeadBlockBreaker.png" />
 	  <None Remove="Items\Sprites\LeadBlockPlacer.png" />
 	  <None Remove="Items\Sprites\LuminiteAutoExtractinator.png" />
@@ -65,6 +66,9 @@
 	  <None Remove="Localization\pt-BR.hjson" />
 	  <None Remove="Localization\ru-RU.hjson" />
 	  <None Remove="Localization\zh-Hans.hjson" />
+	  <None Remove="TileData\Pipes\Sprites\BasicPipe.png" />
+	  <None Remove="TileData\Pipes\Sprites\BuilderIcons.png" />
+	  <None Remove="TileData\Pipes\Sprites\Item_530.png" />
 	  <None Remove="Tiles\AutoExtractors\ExtractinatorDust.png" />
 	  <None Remove="Tiles\AutoExtractors\ExtractinatorIndicatorDot.png" />
 	  <None Remove="Tiles\Sprites\AdamantiteBlockBreaker.png" />

@@ -36,9 +36,12 @@ namespace TerrariaAutomations.Common.Configs
 		[DefaultValue(true)]
 		public bool DisplayChestIndicators;
 
-		//[DefaultValue(100)]
-		//[Range(0, (int)byte.MaxValue)]
-		//public int UITransparency;
+		//Testing Settings
+		[JsonIgnore]
+		public const string TestingSettingsKey = "TestingSettings";
+		[Header($"$Mods.{TA_Mod.ModName}.{L_ID_Tags.Configs}.{ClientConfigName}.{TestingSettingsKey}")]
 
+		[DefaultValue(false)]
+		public bool ShowPipeAndStorageColors;
 	}
 }

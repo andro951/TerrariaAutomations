@@ -20,6 +20,8 @@ using androLib.Common.Globals;
 using TerrariaAutomations.Items;
 using Terraria.UI;
 using androLib.Tiles;
+using TerrariaAutomations.TileData.Pipes;
+using System.Collections;
 
 namespace TerrariaAutomations.Tiles {
 	public abstract class BlockBreaker : AndroModTile {
@@ -82,24 +84,66 @@ namespace TerrariaAutomations.Tiles {
 		}
 
 		internal static void OnSpawn(Item item, IEntitySource context) {
-			if (breakingTree)
-				TryDepositVisualizeChestTransfer(item, blockBreakerX, blockBreakerY);
+			if (breakingBlock) {
+				if (TryDepositToTouchingChests(item))
+					return;
+
+				TryDepositToStorageNetwork(item);
+			}
 		}
 
-		private static bool TryDepositVisualizeChestTransfer(Item item, int x, int y) {
+		private static bool TryDepositToTouchingChests(Item item) {
 			Tile blockBreakerTile = Main.tile[blockBreakerX, blockBreakerY];
 			ModTile modTile = TileLoader.GetTile(blockBreakerTile.TileType);
 			if (modTile is not BlockBreaker)
 				return false;
 
-			GetChests(x, y, out List<int> storageChests);
-			foreach (int chestNum in storageChests) {
-				Chest chest = Main.chest[chestNum];
-				if (chest.DepositVisualizeChestTransfer(item))
-					break;
+			GetChests(blockBreakerX, blockBreakerY, out List<int> storageChests);
+			if (storageChests.Count == 0)
+				return false;
+
+			if (breakingTree) {
+				foreach (int chestNum in storageChests) {
+					Chest chest = Main.chest[chestNum];
+					if (chest.DepositVisualizeChestTransfer(item))
+						return true;
+				}
+			}
+			else {
+				foreach (int chestNum in storageChests) {
+					Chest chest = Main.chest[chestNum];
+					if (chest.item.Deposit(item, out _))
+						return true;
+				}
 			}
 
-			return true;
+			return false;
+		}
+
+		private static void TryDepositToStorageNetwork(Item item) {
+			if (!StorageNetwork.TryGetStorageInventories(blockBreakerX, blockBreakerY, out List<StorageInfo> storages))
+				return;
+
+			IEnumerable<IList<Item>> inventories = storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory);
+			if (breakingTree) {
+				int stack = item.stack;
+				foreach (IList<Item> inv in inventories) {
+					if (inv.Deposit(item, out _))
+						break;
+				}
+
+				int transferred = stack - item.stack;
+				if (transferred != 0) {
+					//TODO: Visualize the transfer to the breaker instead of chest
+
+				}
+			}
+			else {
+				foreach (IList<Item> inv in inventories) {
+					if (inv.Deposit(item, out _))
+						return;
+				}
+			}
 		}
 
 		private bool On_WorldGen_EmptyTileCheck(On_WorldGen.orig_EmptyTileCheck orig, int startX, int endX, int startY, int endY, int ignoreID) {
@@ -203,8 +247,7 @@ namespace TerrariaAutomations.Tiles {
 
 		protected HitTileObject hitData = new();
 		private static bool breakingTree = false;
-		private static int breakingTileX;
-		private static int breakingTileY;
+		private static bool breakingBlock = false;
 		private static int blockBreakerX;
 		private static int blockBreakerY;
 		public static void SendChestDatas(int x, int y) {
@@ -276,8 +319,7 @@ namespace TerrariaAutomations.Tiles {
 			bool fail = pickaxePower < GenericGlobalTile.GetRequiredPickaxePower(target.TileType);
 
 			breakingTree = tree;
-			breakingTileX = x;
-			breakingTileY = y;
+			breakingBlock = true;
 			blockBreakerX = i;
 			blockBreakerY = j;
 			WorldGen.KillTile(x, y, fail);
@@ -285,8 +327,7 @@ namespace TerrariaAutomations.Tiles {
 				NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, x, y);
 
 			breakingTree = false;
-			breakingTileX = -1;
-			breakingTileY = -1;
+			breakingBlock = false;
 		}
 		public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
 			Entity.Kill(i, j);

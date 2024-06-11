@@ -28,7 +28,6 @@ namespace TerrariaAutomations.Common.Globals
 		}
 
 		public static SortedDictionary<int, ChestIndicatorInfo> ChestPercentFullInfo = new();
-		private static readonly Point16 none = new(-1, -1);
 		private static Point16[] allPoints = [
 			new(0, -1),
 			new(1, -1),

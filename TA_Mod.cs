@@ -14,6 +14,7 @@ using Terraria.ModLoader;
 using TerrariaAutomations.Common.Configs;
 using TerrariaAutomations.Common.Globals;
 using TerrariaAutomations.Items;
+using TerrariaAutomations.TileData;
 using TerrariaAutomations.Tiles;
 using TerrariaAutomations.Tiles.TileEntities;
 
@@ -31,7 +32,6 @@ namespace TerrariaAutomations
 			AddNonLoadedContent();
 
 			hooks.Add(new(GlobalAutoExtractor.OnTileRightClickInfo, GlobalAutoExtractor.TileLoaderRightClickDetour));
-
 			foreach (Hook hook in hooks) {
 				hook.Apply();
 			}
@@ -58,20 +58,21 @@ namespace TerrariaAutomations
 			}
 		}
 		public enum TA_ModPacketID {
-			RequestAllAutoFishersFromServer,
 			ChestIndicatorInfo,
 			AutoFisherUseItem,
 			AutoFisherItemSync,
+			UpdatePipe,
+			SyncAllPipeData,
 		}
 		public override void HandlePacket(BinaryReader reader, int whoAmI) {
 			if (Main.netMode == NetmodeID.Server) {
 				byte packetID = reader.ReadByte();
 				switch ((TA_ModPacketID)packetID) {
-					case TA_ModPacketID.RequestAllAutoFishersFromServer:
-						AutoFisherTE.RequestAllTEsToClient(whoAmI);
-						break;
 					case TA_ModPacketID.AutoFisherItemSync:
 						AutoFisherTE.ReceiveItem(reader, whoAmI);
+						break;
+					case TA_ModPacketID.UpdatePipe:
+						TA_TileData.RecievePipeUpdate(reader, whoAmI);
 						break;
 					default:
 						throw new Exception($"Received packet ID: {packetID}.  Not recognized.");
@@ -88,6 +89,12 @@ namespace TerrariaAutomations
 						break;
 					case TA_ModPacketID.AutoFisherItemSync:
 						AutoFisherTE.ReceiveItem(reader);
+						break;
+					case TA_ModPacketID.UpdatePipe:
+						TA_TileData.RecievePipeUpdate(reader, whoAmI);
+						break;
+					case TA_ModPacketID.SyncAllPipeData:
+						TA_TileData.RecieveAllPipeData(reader);
 						break;
 					default:
 						throw new Exception($"Recieved packet ID: {packetID}.  Not recognized.");

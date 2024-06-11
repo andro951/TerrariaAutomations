@@ -86,11 +86,6 @@ Mods: {
 					'''
 			}
 
-			CrimsonAltar: {
-				DisplayName: Crimson Altar
-				Tooltip: Works the same as vanilla Demon Altar except is craftable.
-			}
-
 			CrimtaneBlockBreaker: {
 				DisplayName: Crimtane Block Breaker
 				Tooltip:
@@ -110,11 +105,6 @@ Mods: {
 					Cooldown: 0.9 seconds
 					Can be used to break blocks that require Crimtane Bar to break.If wire is placed on this block, it will only try to mine each time it receives a wiring signal.
 					'''
-			}
-
-			DemonAltar: {
-				DisplayName: Demon Altar
-				Tooltip: Works the same as vanilla Crimson Altar except is craftable.
 			}
 
 			DemoniteBlockBreaker: {
@@ -348,16 +338,6 @@ Mods: {
 					'''
 			}
 
-			RainTotem: {
-				DisplayName: Rain Totem
-				Tooltip:
-					'''
-					Provides a 25% chance to rain every day when placed.
-					Rain in a snow biome or in high altitudes causes snow.
-					While snowing, snow blocks will occasionally spawn on the surface.
-					'''
-			}
-
 			SilverBlockBreaker: {
 				DisplayName: Silver Block Breaker
 				Tooltip:
@@ -463,46 +443,6 @@ Mods: {
 					'''
 			}
 
-			WoodChips: {
-				DisplayName: 木屑
-				Tooltip:
-					'''
-					Right click to break apart the Wood Chips to see what you can find.
-					10% chance to drop bugs.
-					25% chance to drop acorns.
-					'''
-			}
-
-			AutoExtractor: {
-				// DisplayName: Auto Extractor
-				// Tooltip: ""
-			}
-
-			AutoExtractorTier2: {
-				// DisplayName: Auto Extractor Tier2
-				// Tooltip: ""
-			}
-
-			AutoExtractorTier3: {
-				// DisplayName: Auto Extractor Tier3
-				// Tooltip: ""
-			}
-
-			AutoExtractorTier4: {
-				// DisplayName: Auto Extractor Tier4
-				// Tooltip: ""
-			}
-
-			AutoExtractorTier5: {
-				// DisplayName: Auto Extractor Tier5
-				// Tooltip: ""
-			}
-
-			LeafBlock: {
-				// DisplayName: Leaf Block
-				// Tooltip: ""
-			}
-
 			WoodAutoExtractinator: {
 				// DisplayName: Wood Auto Extractinator
 				// Tooltip: ""
@@ -517,36 +457,41 @@ Mods: {
 				// DisplayName: Luminite Auto Extractinator
 				// Tooltip: ""
 			}
+
+			PipeWrench: {
+				// DisplayName: Pipe Wrench
+				// Tooltip: ""
+			}
+
+			Pipe: {
+				// DisplayName: Pipe
+				// Tooltip: ""
+			}
 		}
 
 		Tiles: {
 			// AdamantiteBlockBreaker.MapEntry: Adamantite Block Breaker
 			// AdamantiteBlockPlacer.MapEntry: Adamantite Block Placer
-			// AutoExtractorTier1Tile.MapEntry: Auto Extractor Tier1 Tile
-			// AutoExtractorTier2Tile.MapEntry: Auto Extractor Tier2 Tile
-			// AutoExtractorTier3Tile.MapEntry: Auto Extractor Tier3 Tile
-			// AutoExtractorTier4Tile.MapEntry: Auto Extractor Tier4 Tile
-			// AutoExtractorTier5Tile.MapEntry: Auto Extractor Tier5 Tile
 			// ChlorophyteBlockBreaker.MapEntry: Chlorophyte Block Breaker
 			// ChlorophyteBlockPlacer.MapEntry: Chlorophyte Block Placer
 			// CobaltBlockBreaker.MapEntry: Cobalt Block Breaker
 			// CobaltBlockPlacer.MapEntry: Cobalt Block Placer
 			// CopperBlockBreaker.MapEntry: Copper Block Breaker
 			// CopperBlockPlacer.MapEntry: Copper Block Placer
-			// CrimsonAltar.MapEntry: Crimson Altar
 			// CrimtaneBlockBreaker.MapEntry: Crimtane Block Breaker
 			// CrimtaneBlockPlacer.MapEntry: Crimtane Block Placer
-			// DemonAltar.MapEntry: Demon Altar
 			// DemoniteBlockBreaker.MapEntry: Demonite Block Breaker
 			// DemoniteBlockPlacer.MapEntry: Demonite Block Placer
 			// GoldBlockBreaker.MapEntry: Gold Block Breaker
 			// GoldBlockPlacer.MapEntry: Gold Block Placer
+			// HellstoneAutoExtractinatorTile.MapEntry: Hellstone Auto Extractinator Tile
 			// HellstoneBlockBreaker.MapEntry: Hellstone Block Breaker
 			// HellstoneBlockPlacer.MapEntry: Hellstone Block Placer
 			// IronBlockBreaker.MapEntry: Iron Block Breaker
 			// IronBlockPlacer.MapEntry: Iron Block Placer
 			// LeadBlockBreaker.MapEntry: Lead Block Breaker
 			// LeadBlockPlacer.MapEntry: Lead Block Placer
+			// LuminiteAutoExtractinatorTile.MapEntry: Luminite Auto Extractinator Tile
 			// LuminiteBlockBreaker.MapEntry: Luminite Block Breaker
 			// LuminiteBlockPlacer.MapEntry: Luminite Block Placer
 			// MeteoriteBlockBreaker.MapEntry: Meteorite Block Breaker
@@ -559,7 +504,6 @@ Mods: {
 			// PalladiumBlockPlacer.MapEntry: Palladium Block Placer
 			// PlatinumBlockBreaker.MapEntry: Platinum Block Breaker
 			// PlatinumBlockPlacer.MapEntry: Platinum Block Placer
-			// RainTotem.MapEntry: Rain Totem
 			// SilverBlockBreaker.MapEntry: Silver Block Breaker
 			// SilverBlockPlacer.MapEntry: Silver Block Placer
 			// TinBlockBreaker.MapEntry: Tin Block Breaker
@@ -568,118 +512,12 @@ Mods: {
 			// TitaniumBlockPlacer.MapEntry: Titanium Block Placer
 			// TungstenBlockBreaker.MapEntry: Tungsten Block Breaker
 			// TungstenBlockPlacer.MapEntry: Tungsten Block Placer
+			// WoodAutoExtractinatorTile.MapEntry: Wood Auto Extractinator Tile
 			// WoodBlockBreaker.MapEntry: Wood Block Breaker
 			// WoodBlockPlacer.MapEntry: Wood Block Placer
-			// HellstoneAutoExtractinatorTile.MapEntry: Hellstone Auto Extractinator Tile
-			// LuminiteAutoExtractinatorTile.MapEntry: Luminite Auto Extractinator Tile
-			// WoodAutoExtractinatorTile.MapEntry: Wood Auto Extractinator Tile
 		}
 
-		// Projectiles.SnowFlake.DisplayName: Snow Flake
-
 		Configs: {
-			AndroClientConfig: {
-				// DisplayName: Andro Client Config
-
-				UITransparency: {
-					// Label: U I Transparency
-					// Tooltip: ""
-				}
-
-				RemoveItemsWhenBlacklisted: {
-					// Label: Remove Items When Blacklisted
-					// Tooltip: ""
-				}
-
-				ClosingInventoryClosesBags: {
-					// Label: Closing Inventory Closes Bags
-					// Tooltip: ""
-				}
-
-				ReOpenBagSwitcherAutomatically: {
-					// Label: Re Open Bag Switcher Automatically
-					// Tooltip: ""
-				}
-
-				UseAlternateRarityColors: {
-					// Label: Use Alternate Rarity Colors
-					// Tooltip: ""
-				}
-
-				StopProvidingItemsInBagsForCrafting: {
-					// Label: Stop Providing Items In Bags For Crafting
-					// Tooltip: ""
-				}
-
-				StorageSizes: {
-					// Label: Storage Sizes
-					// Tooltip: ""
-				}
-
-				PrintLocalizationLists: {
-					// Label: Print Localization Lists
-					// Tooltip: ""
-				}
-
-				PrintItemDrops: {
-					// Label: Print Item Drops
-					// Tooltip: ""
-				}
-
-				LogAllPlayerWhiteAndBlackLists: {
-					// Label: Log All Player White And Black Lists
-					// Tooltip: ""
-				}
-
-				WhiteLists: {
-					// Label: White Lists
-					// Tooltip: ""
-				}
-
-				BlackLists: {
-					// Label: Black Lists
-					// Tooltip: ""
-				}
-
-				DisableAllErrorMessagesInChat: {
-					// Label: Disable All Error Messages In Chat
-					// Tooltip: ""
-				}
-
-				OnlyShowErrorMessagesInChatOnce: {
-					// Label: Only Show Error Messages In Chat Once
-					// Tooltip: ""
-				}
-			}
-
-			StorageSizePair: {
-				// Tooltip: ""
-
-				StorageSize: {
-					// Label: Storage Size
-					// Tooltip: ""
-				}
-
-				ModFullName: {
-					// Label: Mod Full Name
-					// Tooltip: ""
-				}
-			}
-
-			ItemList: {
-				// Tooltip: ""
-
-				ItemDefinitions: {
-					// Label: Item Definitions
-					// Tooltip: ""
-				}
-
-				ModFullName: {
-					// Label: Mod Full Name
-					// Tooltip: ""
-				}
-			}
-
 			TA_ClientConfig: {
 				// DisplayName: T A_ Client Config
 
@@ -687,9 +525,17 @@ Mods: {
 					// Label: Display Chest Indicators
 					// Tooltip: ""
 				}
+
+				ShowPipeAndStorageColors: {
+					// Label: Show Pipe And Storage Colors
+					// Tooltip: ""
+				}
 			}
 
-			// TerrariaAutomationsClientConfig.DisplaySettings: Display Chest Indicators Header
+			TerrariaAutomationsClientConfig: {
+				// DisplaySettings: Display Chest Indicators Header
+				// TestingSettings: Show Pipe And Storage Colors Header
+			}
 
 			TA_ServerConfig: {
 				// DisplayName: T A_ Server Config

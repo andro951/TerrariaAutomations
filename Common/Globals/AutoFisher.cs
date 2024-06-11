@@ -23,6 +23,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.ObjectData;
 using Terraria.UI;
+using TerrariaAutomations.TileData.Pipes;
 using TerrariaAutomations.Tiles.Interfaces;
 
 namespace TerrariaAutomations.Common.Globals {
@@ -1406,9 +1407,21 @@ namespace TerrariaAutomations.Common.Globals {
 			item.position.Y = projectile.Center.Y - (float)(item.height / 2);
 			if (projectile.TryGetAutoFisher(out AutoFisherTE autoFisherTE)) {
 				autoFisherTE.GetChests(out List<int> storageChests);
+				bool transferedAll = false;
 				foreach (int chestNum in storageChests) {
-					if (Main.chest[chestNum].DepositVisualizeChestTransfer(item))
+					if (Main.chest[chestNum].DepositVisualizeChestTransfer(item)) {
+						transferedAll = true;
 						break;
+					}
+				}
+
+				if (!transferedAll) {
+					if (StorageNetwork.TryGetStorageInventories(autoFisherTE.Position.X, autoFisherTE.Position.Y, out List<StorageInfo> storages)) {
+						foreach(IList<Item> inv in storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory)) {
+							if (inv.Deposit(item, out _))
+								break;
+						}
+					}
 				}
 			}
 
@@ -2011,11 +2024,6 @@ namespace TerrariaAutomations.Common.Globals {
 				if (ignoreClient != -1)
 					autoFisherTE.SendItem(index, ignoreClient: ignoreClient);
 			}
-		}
-		internal static void SendAllAutoFisherTEsRequest() {
-			ModPacket modPacket = TA_Mod.Instance.GetPacket();
-			modPacket.Write((byte)TA_Mod.TA_ModPacketID.RequestAllAutoFishersFromServer);
-			modPacket.Send();
 		}
 
 		#endregion

@@ -18,6 +18,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.UI;
 using androLib.Tiles;
+using TerrariaAutomations.TileData.Pipes;
 
 namespace TerrariaAutomations.Tiles {
 	public abstract class BlockPlacer : AndroModTile {
@@ -120,17 +121,14 @@ namespace TerrariaAutomations.Tiles {
 			if (x < 0 || x > Main.maxTilesX - 1 || y < 0 || y > Main.maxTilesY - 1)
 				return;
 
+			if (!Wiring.CheckMech(i, j, cooldown))
+				return;
+
 			Tile target = Main.tile[x, y];
 
 			bool saplingOnly = !CanPlaceOnTile(target) && placerFacingDirection == PathDirectionID.Up;
 
 			GetChests(i, j, out List<int> storageChests);
-			
-			if (storageChests.Count < 1)
-				return;
-
-			if (!Wiring.CheckMech(i, j, cooldown))
-				return;
 
 			//Select Block to place
 			Item itemToPlace = null;
@@ -144,41 +142,62 @@ namespace TerrariaAutomations.Tiles {
 				}
 			}
 
-			if (itemToPlace != null) {
-				PathDirectionID.GetDirection(placerFacingDirection, x, y, out int x2, out int y2);
-				bool CanUse2ndTileValues = x2 >= 0 && x2 <= Main.maxTilesX - 1 && y2 >= 0 && y2 <= Main.maxTilesY - 1;
-				if (CanUse2ndTileValues) {
-					Tile target2 = Main.tile[x2, y2];
-					if (!CanPlaceOnTile(target2) && (TileID.Sets.CommonSapling[target2.TileType] || TileID.Sets.TreeSapling[target2.TileType]))
-						return;//Don't place a block right next to a sapling.
-				}
+			if (itemToPlace == null) {
+				if (!StorageNetwork.TryGetStorageInventories(i, j, out List<StorageInfo> storages))
+					return;
 
-				if (TileID.Sets.CommonSapling[itemToPlace.createTile] || TileID.Sets.TreeSapling[itemToPlace.createTile]) {
-					if (CanUse2ndTileValues) {
-						Tile target2 = Main.tile[x2, y2];
-						if (CanPlaceOnTile(target2)) {
-							x = x2;//Place sapling 2 blocks away.
-							y = y2;
-						}
-						else {
-							return;//Don't place sapling 1 block away
-						}
+				foreach (IList<Item> storage in storages.Where(s => s.CanWithdrawItemsFrom).Select(s => s.Inventory)) {
+					if (SelectPlacableBlock(storage, saplingOnly, out Item item)) {
+						itemToPlace = item;
+						break;
 					}
 				}
+			}
 
-				AndroUtilityMethods.PlaceTile(x, y, itemToPlace);
-				Tile tile = Main.tile[x, y];
-				if (tile.HasTile && tile.TileType == itemToPlace.createTile) {
-					itemToPlace.stack--;
-					if (itemToPlace.stack <= 0)
-						itemToPlace.TurnToAir();
+			if (itemToPlace == null)
+				return;
+
+			PathDirectionID.GetDirection(placerFacingDirection, x, y, out int x2, out int y2);
+			bool CanUse2ndTileValues = x2 >= 0 && x2 <= Main.maxTilesX - 1 && y2 >= 0 && y2 <= Main.maxTilesY - 1;
+			if (CanUse2ndTileValues) {
+				Tile target2 = Main.tile[x2, y2];
+				if (!CanPlaceOnTile(target2) && (TileID.Sets.CommonSapling[target2.TileType] || TileID.Sets.TreeSapling[target2.TileType]))
+					return;//Don't place a block right next to a sapling.
+			}
+
+			if (TileID.Sets.CommonSapling[itemToPlace.createTile] || TileID.Sets.TreeSapling[itemToPlace.createTile]) {
+				if (CanUse2ndTileValues) {
+					Tile target2 = Main.tile[x2, y2];
+					if (CanPlaceOnTile(target2)) {
+						x = x2;//Place sapling 2 blocks away.
+						y = y2;
+					}
+					else {
+						return;//Don't place sapling 1 block away
+					}
 				}
 			}
-				
+
+			AndroUtilityMethods.PlaceTile(x, y, itemToPlace);
+			Tile tile = Main.tile[x, y];
+			if (tile.HasTile && tile.TileType == itemToPlace.createTile) {
+				itemToPlace.stack--;
+				if (itemToPlace.stack <= 0)
+					itemToPlace.TurnToAir();
+			}
 		}
 		private static bool SelectPlacableBlock(int chestNum, bool saplingOnly, out Item itemToPlace) {
+			Chest chest = Main.chest[chestNum];
+			if (chest?.item == null) {
+				itemToPlace = null;
+				return false;
+			}
+
+			return SelectPlacableBlock(chest.item, saplingOnly, out itemToPlace);
+		}
+		private static bool SelectPlacableBlock(IList<Item> inventory, bool saplingOnly, out Item itemToPlace) {
 			itemToPlace = null;
-			foreach (Item item in Main.chest[chestNum].item) {
+			foreach (Item item in inventory) {
 				if (item.NullOrAir() || item.stack < 1)
 					continue;
 
