@@ -46,8 +46,8 @@ namespace TerrariaAutomations.Items {
 			return false;
 		}
 		public override void AddRecipes() {
-			CreateRecipe()
-				.AddRecipeGroup($"{AndroMod.ModName}:{AndroModSystem.AnyIronBar}", ItemID.IronBar.CSI().value / Item.value)
+			CreateRecipe((int)MathF.Round((float)ItemID.IronBar.CSI().value / (float)Item.value))
+				.AddRecipeGroup($"{AndroMod.ModName}:{AndroModSystem.AnyIronBar}")
 				.AddTile(TileID.Anvils)
 				.Register();
 		}

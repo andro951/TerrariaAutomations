@@ -73,6 +73,11 @@ This mod was originally designed as part of my Engaged Skyblock mod, but I decid
 			All automation tiles are compatible with wiring.  Placing a wire on them will pause them.  When the wire is activated, they will do 1 operation.
 			This allows timers to work as on/off switches if desired, or you can do some timing with block breakers/placers for tile conversions.
 
+		Pipes:
+			Pipes are similar to vanilla wire.  They are placed with a Pipe Wrench (Right click with a Pipe Wrench to remove.)
+			Pipes connect chests and automation tiles together to form a stroage network.  Automations tiles will use chests in the network for storing/using items.
+			Pipes are compatible with vanilla Junction Boxes.
+
 	-Recipies:
 		Extractinator [i:997]: [Anvil] 20 Iron/Lead bar [i:22]/[i:704] + Wood Auto Extractinator
 		Chlorophyte Extractinator [i:5296]: [Mythril Anvil] 20 Chlorophyte Bar [i:1006] + Hellstone Auto Extractinator
