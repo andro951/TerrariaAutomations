@@ -19,7 +19,7 @@ namespace TerrariaAutomations.Items {
 			get {
 				if (pipeWrenchType == null)
 					pipeWrenchType = ModContent.ItemType<PipeWrench>();
-
+				
 				return pipeWrenchType.Value;
 			}
 		}

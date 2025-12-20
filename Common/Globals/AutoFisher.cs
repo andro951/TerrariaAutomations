@@ -43,7 +43,7 @@ namespace TerrariaAutomations.Common.Globals {
 			On_Projectile.AI_061_FishingBobber_GiveItemToPlayer += On_Projectile_AI_061_FishingBobber_GiveItemToPlayer;
 			On_Player.ItemCheck_CheckFishingBobbers += On_Player_ItemCheck_CheckFishingBobbers;
 			IL_Projectile.Kill += IL_Projectile_Kill;
-			//On_Projectile.Kill += On_Projectile_Kill;
+			On_Projectile.Kill += On_Projectile_Kill;
 
 			On_TEDisplayDoll.Draw += On_TEDisplayDoll_Draw;
 			On_TEDisplayDoll.DrawInner += On_TEDisplayDoll_DrawInner;
@@ -58,6 +58,21 @@ namespace TerrariaAutomations.Common.Globals {
 			On_MapHeadRenderer.DrawPlayerHead += On_MapHeadRenderer_DrawPlayerHead;
 			On_ItemSlot.PickItemMovementAction += On_ItemSlot_PickItemMovementAction;
 			On_PlayerInteractionAnchor.Clear += On_PlayerInteractionAnchor_Clear;
+		}
+
+		private void On_Projectile_Kill(On_Projectile.orig_Kill orig, Projectile self) {
+			//Could do this:
+			///*
+			if (self.bobber && Main.netMode == NetmodeID.SinglePlayer && Main.myPlayer != self.owner) {
+				///*
+				if (self.ai[1] > 0f)
+					self.AI_061_FishingBobber_GiveItemToPlayer(Main.player[self.owner], (int)self.ai[1]);
+
+				self.ai[1] = 0f;
+				//*/
+			}
+			//*/
+			orig(self);
 		}
 
 		#region Fixes
@@ -189,15 +204,7 @@ namespace TerrariaAutomations.Common.Globals {
 							bool transferedAny = false;
 							for (; num < 8; num++) {
 								Item existing = autoFisherTE.autoFishingItems[num];
-								if (existing.NullOrAir()) {
-									Utils.Swap(ref autoFisherTE.autoFishingItems[num], ref inv[slot]);
-									transferedAny = true;
-									//if (Main.netMode == 1)
-									//	autoFisherTE.SendItem(num);
-
-									break;
-								}
-								else if (existing.type == item.type && ItemLoader.TryStackItems(existing, item, out int transferred)) {
+								if (existing.type == item.type && ItemLoader.TryStackItems(existing, item, out int transferred)) {
 									stack -= transferred;
 									transferedAny = true;
 									//if (Main.netMode == 1)
@@ -205,6 +212,20 @@ namespace TerrariaAutomations.Common.Globals {
 
 									if (stack <= 0)
 										break;
+								}
+							}
+
+                            if (item.stack > 0) {
+								for (num = 1; num < 8; num++) {
+									Item existing = autoFisherTE.autoFishingItems[num];
+									if (existing.NullOrAir()) {
+										Utils.Swap(ref autoFisherTE.autoFishingItems[num], ref inv[slot]);
+										transferedAny = true;
+										//if (Main.netMode == 1)
+										//	autoFisherTE.SendItem(num);
+
+										break;
+									}
 								}
 							}
 
@@ -505,7 +526,7 @@ namespace TerrariaAutomations.Common.Globals {
 			if (!projectile.TryGetAutoFisher(out AutoFisherTE autoFisherTE))
 				return false;
 
-			bool doClientChecks = Main.netMode == NetmodeID.SinglePlayer ? true : Main.myPlayer == projectile.owner;
+			bool doClientChecks = Main.netMode == NetmodeID.SinglePlayer || Main.myPlayer == projectile.owner;
 			Player player = autoFisherTE.Player;
 			int width = player.width;
 			int height = player.height;
@@ -1718,9 +1739,17 @@ namespace TerrariaAutomations.Common.Globals {
 				projectile.netUpdate2 = true;
 				canUse = true;
 				if (projectile.ai[1] < 0f && projectile.localAI[1] != 0f) {
+					//float ai0 = projectile.ai[0];
+					//float ai1 = projectile.ai[1];
+					//float localAI1 = projectile.localAI[1];
 					Player.ItemCheck_CheckFishingBobber_PickAndConsumeBait(projectile, out var pullTheBobber, out var baitTypeUsed);
 					if (pullTheBobber)
 						Player.ItemCheck_CheckFishingBobber_PullBobber(projectile, baitTypeUsed);
+
+
+					//float ai02 = projectile.ai[0];
+					//float ai12 = projectile.ai[1];
+					//float localAI12 = projectile.localAI[1];
 				}
 			}
 		}
@@ -2035,8 +2064,8 @@ namespace TerrariaAutomations.Common.Globals {
 		public static void ReduceRemainingChumsInPool(this Projectile projectile) => ReduceRemainingChumsInPoolInfo.Invoke(projectile, null);
 		private static MethodInfo AI_061_FishingBobber_GetWaterLineInfo = typeof(Projectile).GetMethod("AI_061_FishingBobber_GetWaterLine", BindingFlags.NonPublic | BindingFlags.Instance);
 		public static float AI_061_FishingBobber_GetWaterLine(this Projectile projectile, int X, int Y) => (float)AI_061_FishingBobber_GetWaterLineInfo.Invoke(projectile, [X, Y]);
-		//private static MethodInfo AI_061_FishingBobber_GiveItemToPlayerInfo = typeof(Projectile).GetMethod("AI_061_FishingBobber_GiveItemToPlayer", BindingFlags.NonPublic | BindingFlags.Instance);
-		//public static void AI_061_FishingBobber_GiveItemToPlayer(this Projectile projectile, Player player, int itemType) => AI_061_FishingBobber_GiveItemToPlayerInfo.Invoke(projectile, [player, itemType]);
+		private static MethodInfo AI_061_FishingBobber_GiveItemToPlayerInfo = typeof(Projectile).GetMethod("AI_061_FishingBobber_GiveItemToPlayer", BindingFlags.NonPublic | BindingFlags.Instance);
+		public static void AI_061_FishingBobber_GiveItemToPlayer(this Projectile projectile, Player player, int itemType) => AI_061_FishingBobber_GiveItemToPlayerInfo.Invoke(projectile, [player, itemType]);
 		private static MethodInfo GetFishingPondStateInfo = typeof(Projectile).GetMethod("GetFishingPondState", BindingFlags.NonPublic | BindingFlags.Static);
 		public static void GetFishingPondState(int x, int y, out bool lava, out bool honey, out int numWaters, out int chumCount) {
 			lava = false;

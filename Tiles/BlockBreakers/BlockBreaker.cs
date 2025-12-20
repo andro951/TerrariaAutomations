@@ -89,6 +89,13 @@ namespace TerrariaAutomations.Tiles {
 					return;
 
 				TryDepositToStorageNetwork(item);
+
+				if (!item.NullOrAir() && item.stack > 0) {
+					Tile tile = Main.tile[blockBreakerX, blockBreakerY];
+					int directionID = tile.TileFrameX / 18;
+					PathDirectionID.GetDirection(PathDirectionID.GetOppositeDirection(directionID), out int x, out int y);
+					item.position += new Vector2(x, y) * 32;
+				}
 			}
 		}
 
@@ -147,7 +154,7 @@ namespace TerrariaAutomations.Tiles {
 		}
 
 		private bool On_WorldGen_EmptyTileCheck(On_WorldGen.orig_EmptyTileCheck orig, int startX, int endX, int startY, int endY, int ignoreID) {
-			if (TileID.Sets.CommonSapling[ignoreID]) {
+			if (ignoreID >= 0 && TileID.Sets.CommonSapling[ignoreID]) {
 				if (startX < 0)
 					return false;
 
