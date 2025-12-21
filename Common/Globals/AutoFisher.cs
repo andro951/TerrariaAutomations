@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -307,8 +308,20 @@ namespace TerrariaAutomations.Common.Globals {
 						}
 					}
 
-					ItemSlot.Draw(spriteBatch, items, 28, i, new Vector2(num2, num3));
-				}
+					Vector2 position = new(num2, num3);
+                    ItemSlot.Draw(spriteBatch, items, 28, i, position);
+					if (items[i].NullOrAir()) {
+                        int backgroundItemType = i == 0 ? ItemID.FiberglassFishingPole : ItemID.MasterBait;
+                        Main.instance.LoadItem(backgroundItemType);
+                        Asset<Texture2D> texture = TextureAssets.Item[backgroundItemType];
+						Texture2D value11 = texture.Value;
+                        float inventoryScale = Main.inventoryScale;
+						float scale = i == 0 ? 0.9f : 1.25f;
+						Vector2 offset = i == 0 ? new(2f, 1f) : new(10f, 10f);
+                        Vector2 position4 = position + texture.Size() * inventoryScale / 2f - value11.Size() * inventoryScale / 2f * scale + offset;
+                        spriteBatch.Draw(value11, position4, null, new Color(100, 100, 100, 100), 0f, default(Vector2), inventoryScale * scale, SpriteEffects.None, 0f);
+                    }
+                }
 			}
 		}
 		private static int On_ItemSlot_PickItemMovementAction(On_ItemSlot.orig_PickItemMovementAction orig, Item[] inv, int context, int slot, Item checkItem) {
