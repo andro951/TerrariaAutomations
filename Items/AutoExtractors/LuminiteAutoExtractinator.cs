@@ -12,8 +12,8 @@ namespace TerrariaAutomations.Items {
 		public override int Tier => 4;
 		public override int RecipeRequiredTile => TileID.MythrilAnvil;
 		public override List<(int, int)> Ingredients => new() {
-			(ItemID.LunarBar, 18),
-			(ItemID.ChlorophyteExtractinator, 1)
+            (ItemID.ChlorophyteExtractinator, 1),
+            (ItemID.LunarBar, 18),
 		};
 	}
 }

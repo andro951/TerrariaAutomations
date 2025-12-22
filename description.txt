@@ -1,4 +1,4 @@
-Terraria Automations is about automating simple farming tasks such as fishing and using items on an extractinator.
+Terraria Automations is for automating simple tasks such as fishing and using items on an extractinator.
 This mod was originally designed as part of my Engaged Skyblock mod, but I decided to make it it's own since the automations could be used in non-skyblock words if desired.
 
 	-Automations:
@@ -21,14 +21,14 @@ This mod was originally designed as part of my Engaged Skyblock mod, but I decid
 				-Extracted items are pushed to chests on either side of the Extractinator, or spawned if no chests are present or they are full.
 			Wood Auto Extractinator:
 				1 extraction every 10 seconds
-				Manual use 5x slower than vanilla Extractinator
-				10% chance to recieve no item
+				Manual use 5x slower than the vanilla Extractinator
+				10% chance to receive no item
 			Vanilla Extractinator:
 				1 extraction every second
 				Manual use (no change, 1x speed)
 			Hellstone Auto Extractinator:
 				2 extractions every second
-				Manual use speed insteased by 1.67x
+				Manual use speed insteased to 1.67x
 				10% chance to double extracted item stack size
 			Vanilla Chlorophyte Extractinator
 				4 extractions every second
@@ -36,11 +36,11 @@ This mod was originally designed as part of my Engaged Skyblock mod, but I decid
 				20% chance to double extracted item stack size
 			Luminite Auto Extractinator
 				10 extractions every second
-				Manual use speed increased by 5x
+				Manual use speed increased to 5x
 				30% chance to double extracted item stack size
 
-			Item rarity:
-				If a mod uses my TerrariaAutomations.ExtractTypeSet to set up extractinator loot, the chance of getting more desireable loot is affected: (Currently doesn't support vanilla drop tables)
+			Drop chance:
+				If a mod uses my TerrariaAutomations.ExtractTypeSet to add extractinator loot, the chance of getting more desireable loot is affected: (Currently doesn't support vanilla drop tables)
 					Wood: reduced by 0.65x
 					Hellstone: 1.35x
 					Vanilla Chlorophyte: 1.7x

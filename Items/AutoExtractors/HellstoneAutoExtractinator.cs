@@ -12,8 +12,8 @@ namespace TerrariaAutomations.Items {
 		public override int Tier => 2;
 		public override int RecipeRequiredTile => TileID.Anvils;
 		public override List<(int, int)> Ingredients => new() {
-			(ItemID.HellstoneBar, 18),
-			(ItemID.Extractinator, 1)
+            (ItemID.Extractinator, 1),
+            (ItemID.HellstoneBar, 18),
 		};
 	}
 }
