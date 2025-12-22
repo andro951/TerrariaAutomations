@@ -18,6 +18,7 @@ using Terraria.DataStructures;
 using Terraria.UI;
 using TerrariaAutomations.Items;
 using TerrariaAutomations.Tiles;
+using TerrariaAutomations.TileData.Pipes;
 
 namespace TerrariaAutomations.Common.Globals
 {
@@ -41,6 +42,12 @@ namespace TerrariaAutomations.Common.Globals
 		public override void PostDraw(int i, int j, int type, SpriteBatch spriteBatch) {
 			if (Main.netMode != NetmodeID.Server && !TA_Mod.clientConfig.DisplayChestIndicators)
 				return;
+
+			//if (Debugger.IsAttached) {
+			//	float distance = Vector2.Distance(new(i * 16, j * 16), Main.LocalPlayer.position);
+			//	if (distance > 200f)
+			//		return;
+			//}
 
 			//TODO: Config to disable indicators
 			if (!ValidTileTypeForDisplayChestIndicators(type))
@@ -106,6 +113,13 @@ namespace TerrariaAutomations.Common.Globals
 					}
 				}
 			}
+
+			if (!found) {
+                StorageInfo storageInfo = new(StorageNetwork.GetVanillaChestInventory, chestX, chestY, StorageNetwork.CanUseChest);
+                if (StorageNetwork.IsTouchingAnyStorageNetwork(storageInfo, out List<StorageNetwork> touchingNetworks)) {
+					found = true;//TODO: Consider storing automation machines and checking if connected to one instead.
+                }
+            }
 
 			if (!found) {
 				if (remove && Main.netMode == NetmodeID.MultiplayerClient) {
