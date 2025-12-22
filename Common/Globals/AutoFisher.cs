@@ -1617,7 +1617,7 @@ namespace TerrariaAutomations.Common.Globals {
 			Place(i, j);
 		}
 		public bool ShouldDisplayChestIndicatorCheckLeftRight(int x, int y, Tile tile) {
-			if (Player.HeldItem.fishingPole <= 0)
+			if (Player.HeldItem.NullOrAir() || Player.HeldItem.fishingPole <= 0)
 				return false;
 
 			return tile.TileFrameY % 54 == 18;//Auto fisher only checks tiles on same level as it.
