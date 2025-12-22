@@ -9,6 +9,15 @@
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="Content\Guidebook\Screenshots\AutoExtractinators Screenshot.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\AutoFisher.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\AutoFisherChest.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\AutoFisherInventory.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\AutoFisherNetwork.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\ChestCompletelyFull.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\ChestIndicators.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\ChestInventoryCompletelyFull.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\ChestInventoryNoOpenSpaces.PNG" />
+	  <None Remove="Content\Guidebook\Screenshots\ChestNoOpenSpaces.PNG" />
 	  <None Remove="Items\Sprites\AdamantiteBlockBreaker.png" />
 	  <None Remove="Items\Sprites\AdamantiteBlockPlacer.png" />
 	  <None Remove="Items\Sprites\ChlorophyteBlockBreaker.png" />
