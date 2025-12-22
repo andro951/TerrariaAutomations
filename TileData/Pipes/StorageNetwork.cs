@@ -62,7 +62,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 
 			throw new Exception("Falied to find an available key in Storages.");
 		}
-		private static bool IsTouchingAnyStorageNetwork(StorageInfo storageInfo, out List<StorageNetwork> touchingNetworks) {
+		public static bool IsTouchingAnyStorageNetwork(StorageInfo storageInfo, out List<StorageNetwork> touchingNetworks) {
 			touchingNetworks = new();
 			foreach (StorageNetwork storageNetwork in AllStorageNetworks.Values) {
 				if (storageNetwork.IsTouching(storageInfo)) {
@@ -765,13 +765,13 @@ namespace TerrariaAutomations.TileData.Pipes {
 			return false;
 		}
 
-		private static IList<Item> GetVanillaChestInventory(int x, int y) {
+		public static IList<Item> GetVanillaChestInventory(int x, int y) {
 			if (AndroUtilityMethods.TryGetChest(x, y, out int chestNum))
 				return Main.chest[chestNum]?.item;
 
 			return null;
 		}
-		private static bool CanUseChest(int x, int y) {
+		public static bool CanUseChest(int x, int y) {
 			if (AndroUtilityMethods.TryGetChest(x, y, out int chestNum))
 				return Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(chestNum) == -1;
 
