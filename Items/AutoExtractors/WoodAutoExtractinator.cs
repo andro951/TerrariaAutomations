@@ -17,7 +17,7 @@ namespace TerrariaAutomations.Items {
 		public override int Tier => 0;
 		public override int RecipeRequiredTile => TileID.WorkBenches;
 		public override List<(int, int)> Ingredients => new() {
-			(ItemID.Wood, 100)
+			(ItemID.Wood, 90)
 		};
 	}
 }

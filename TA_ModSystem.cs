@@ -22,8 +22,8 @@ namespace TerrariaAutomations
 				}
 			}
 
-			Recipe.Create(ItemID.Extractinator).AddTile(TileID.Anvils).AddIngredient(ModContent.ItemType<WoodAutoExtractinator>()).AddRecipeGroup($"{AndroMod.ModName}:{AndroModSystem.AnyIronBar}", 20).Register();
-			Recipe.Create(ItemID.ChlorophyteExtractinator).AddTile(TileID.MythrilAnvil).AddIngredient(ModContent.ItemType<HellstoneAutoExtractinator>()).AddIngredient(ItemID.ChlorophyteBar, 20).Register();
+			Recipe.Create(ItemID.Extractinator).AddTile(TileID.Anvils).AddIngredient(ModContent.ItemType<WoodAutoExtractinator>()).AddRecipeGroup($"{AndroMod.ModName}:{AndroModSystem.AnyIronBar}", 18).Register();
+			Recipe.Create(ItemID.ChlorophyteExtractinator).AddTile(TileID.MythrilAnvil).AddIngredient(ModContent.ItemType<HellstoneAutoExtractinator>()).AddIngredient(ItemID.ChlorophyteBar, 18).Register();
 		}
 		public override void PostSetupContent() {
 			GlobalAutoExtractor.PostSetupContent();
