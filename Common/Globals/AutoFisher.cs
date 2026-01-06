@@ -1451,7 +1451,8 @@ namespace TerrariaAutomations.Common.Globals {
 
 				if (!transferedAll) {
 					if (StorageNetwork.TryGetStorageInventories(autoFisherTE.Position.X, autoFisherTE.Position.Y, out List<StorageInfo> storages)) {
-						foreach(IList<Item> inv in storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory)) {
+						List<Item[]> inventories = storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory).ToList();
+                        foreach (Item[] inv in inventories) {
 							if (inv.Deposit(item, out _))
 								break;
 						}

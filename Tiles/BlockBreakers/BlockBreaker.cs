@@ -131,7 +131,7 @@ namespace TerrariaAutomations.Tiles {
 			if (!StorageNetwork.TryGetStorageInventories(blockBreakerX, blockBreakerY, out List<StorageInfo> storages))
 				return;
 
-			IEnumerable<IList<Item>> inventories = storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory);
+			List<Item[]> inventories = storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory).ToList();
 			if (breakingTree) {
 				int stack = item.stack;
 				foreach (IList<Item> inv in inventories) {

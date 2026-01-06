@@ -18,7 +18,9 @@ using Terraria.GameContent.Creative;
 namespace TerrariaAutomations.TileData.Pipes {
 	public class StorageNetwork {
 		private static int NextNetworkKey = 0;
-		public static bool TestingNetworks => true;
+		/// <summary>
+		/// Find the next available network key, allowing for overflow wrap around.
+		/// </summary>
 		private static int GetNewNetworkKey() {
 			int originalKey = NextNetworkKey;
 			do {
@@ -30,12 +32,15 @@ namespace TerrariaAutomations.TileData.Pipes {
 
 			throw new Exception("Falied to find an available key in AllStorageNetworks.");
 		}
-		public static SortedDictionary<int, StorageNetwork> AllStorageNetworks = new();
-		private static DictionaryGrid<List<PreviousStorageRequest>> PreviousStorageRequests = new();
-		public DictionaryGrid<PipeTypeID> Pipes = new();
-		public DictionaryGrid<int> StoragesLocations = new();//int value is the Storages dict key.
-		private DictionaryGrid<JunctionBoxInfo> JunctionBoxes = new();
-		private SortedDictionary<int, StorageInfo> Storages = new();
+		public static readonly Dictionary<int, StorageNetwork> AllStorageNetworks = [];
+		private static readonly DictionaryGrid<List<PreviousStorageRequest>> PreviousStorageRequests = [];
+		public DictionaryGrid<PipeTypeID> Pipes = [];
+        /// <summary>
+        /// Dictionary grid of Storages Network Keys.
+        /// </summary>
+        public DictionaryGrid<int> StoragesLocations = [];
+        private readonly DictionaryGrid<JunctionBoxInfo> JunctionBoxes = [];
+		private readonly Dictionary<int, StorageInfo> Storages = [];
 		private int NextStorageKey = 0;
 		public Color testingColor = new(Main.rand.NextFloat(), Main.rand.NextFloat(), Main.rand.NextFloat());
 		public StorageNetwork(int x, int y, int junctionBoxType = -1, int junctionBoxPipeGroup = -1) {
@@ -73,14 +78,11 @@ namespace TerrariaAutomations.TileData.Pipes {
 			return touchingNetworks.Count > 0;
 		}
 		private bool IsTouching(StorageInfo storageInfo) {
-			foreach (KeyValuePair<int, SortedSet<int>> p in storageInfo.TileLocations) {
-				int x = p.Key;
-				foreach (int y in p.Value) {
-					if (IsTouching(x, y, out PipeTypeID pipeType)) {
-						//Checks for pipes if needed.
-						return true;
-					}
-				}
+			foreach ((int x, int y) in storageInfo.TileLocations) {
+				if (IsTouching(x, y, out _)) {
+                    //Checks for pipes if needed.
+                    return true;
+                }
 			}
 
 			return false;
@@ -95,7 +97,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 			pipeType = PipeTypeID.None;
 			return false;
 		}
-		public static void PlaceStorageTile(int tileX, int tileY, Func<int, int, IList<Item>> inventoryFunc, Func<int, int, bool> canUse = null, StorageType storageType = StorageType.General) {
+		public static void PlaceStorageTile(int tileX, int tileY, Func<int, int, Item[]> inventoryFunc, Func<int, int, bool> canUse = null, StorageType storageType = StorageType.General) {
 			StorageInfo storageInfo = new(inventoryFunc, tileX, tileY, canUse, storageType);
 			if (IsTouchingAnyStorageNetwork(storageInfo, out List<StorageNetwork> touchingNetworks)) {
 				foreach (StorageNetwork storageNetwork in touchingNetworks) {
@@ -112,11 +114,9 @@ namespace TerrariaAutomations.TileData.Pipes {
 			if (StoragesLocations.TryGetValue(tileX, tileY, out int storageKey)) {
 				StorageInfo storageInfo = Storages[storageKey];
 				if (!IsTouching(storageInfo)) {
-					foreach (KeyValuePair<int, SortedSet<int>> xSet in storageInfo.TileLocations) {
-						foreach (int storageY in xSet.Value) {
-							StoragesLocations.TryRemove(xSet.Key, storageY);
-						}
-					}
+					foreach ((int x, int y) in storageInfo.TileLocations) {
+                        StoragesLocations.TryRemove(x, y);
+                    }
 
 					Storages.Remove(storageKey);
 					return true;
@@ -139,14 +139,12 @@ namespace TerrariaAutomations.TileData.Pipes {
 
 			int storageKey = GetNewStorageKey();
 			Storages.Add(storageKey, storageInfo);
-			foreach (KeyValuePair<int, SortedSet<int>> x in storageInfo.TileLocations) {
-				foreach (int y in x.Value) {
-					if (!StoragesLocations.TryAdd(x.Key, y, storageKey)) {
-						throw new Exception($"StorageLocations already contains ({x.Key}, {y}) {storageKey}");
-					}
-				}
-			}
-		}
+            foreach ((int x, int y) in storageInfo.TileLocations) {
+                if (!StoragesLocations.TryAdd(x, y, storageKey)) {
+                    throw new Exception($"StorageLocations already contains ({x}, {y}) {storageKey}");
+                }
+            }
+        }
 		private struct PreviousStorageRequest {
 			public int NetworkKey;
 			public Point16 PipeLocaion;
@@ -420,7 +418,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 		}
 		internal static void OnPlacePipe(int tileX, int tileY) {
 			bool junctionBox = Main.tile[tileX, tileY].IsJunctionBox(out int junctionBoxType);
-			List<SortedDictionary<int, StorageNetwork>> touchingNetworksList = junctionBox ? [new(), new()] : [new()];
+			List<Dictionary<int, StorageNetwork>> touchingNetworksList = junctionBox ? [new(), new()] : [new()];
 			for (int i = 0; i < 4; i++) {
 				if (!PathDirectionID.GetDirectionCheckInWorld(i, tileX, tileY, out int x, out int y) || !Main.tile[x, y].HasPipe())
 					continue;
@@ -471,7 +469,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 			}
 
 			for (int k = 0; k < touchingNetworksList.Count; k++) {
-				SortedDictionary<int, StorageNetwork> touchingNetworks = touchingNetworksList[k];
+				Dictionary<int, StorageNetwork> touchingNetworks = touchingNetworksList[k];
 				StorageNetwork myNetwork;
 				if (touchingNetworks.Count == 0) {
 					if (junctionBox) {
@@ -575,7 +573,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 					for (int i = 0; i < touchingPipes.Count; i++) {
 						(Point16 location, int directionID) p = touchingPipes[i];
 						DictionaryGrid<PipeTypeID> pipes = [];
-						SortedDictionary<int, SortedSet<int>> checkedLocations = [];
+						Dictionary<int, SortedSet<int>> checkedLocations = [];
 						DictionaryGrid<JunctionBoxInfo> junctionBoxes = [];
 						FindAllPipes(p.location.X, p.location.Y, pipes, checkedLocations, junctionBoxes, p.directionID);
 
@@ -630,7 +628,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 		/// <summary>
 		/// Designed only to be called when a pipe is removed.  This function always needs a fromDirection, or it won't take a junction box on this tile into account.
 		/// </summary>
-		private static void FindAllPipes(int x, int y, DictionaryGrid<PipeTypeID> pipes, SortedDictionary<int, SortedSet<int>> checkedLocations, DictionaryGrid<JunctionBoxInfo> junctionBoxes, int directionToGetHere) {
+		private static void FindAllPipes(int x, int y, DictionaryGrid<PipeTypeID> pipes, Dictionary<int, SortedSet<int>> checkedLocations, DictionaryGrid<JunctionBoxInfo> junctionBoxes, int directionToGetHere) {
 			if (checkedLocations.TryGetValue(x, out SortedSet<int> xSet) && xSet.Contains(y))
 				return;
 
@@ -667,7 +665,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 			}
 		}
 		public static void OnWorldLoad() {
-			StorageNetwork.ClearAll();
+			ClearAll();
 			for (int x = 0; x < Main.maxTilesX; x++) {
 				for (int y = 0; y < Main.maxTilesY; y++) {
 					Tile tile = Main.tile[x, y];
@@ -753,7 +751,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 			Tile tile = Main.tile[X, Y];
 			if (Main.tileContainer[tile.TileType]) {
 				if (GlobalExtractorBase.IsExtractorTile(tile.TileType)) {
-					PlaceStorageTile(X, Y, GetVanillaChestInventory, CanUseChest, StorageType.WithdrawlOnlyNoDeposit);
+					PlaceStorageTile(X, Y, GetVanillaChestInventory, CanUseChest, StorageType.WithdrawalOnlyNoDeposit);
 				}
 				else {
 					PlaceStorageTile(X, Y, GetVanillaChestInventory, CanUseChest);
@@ -765,7 +763,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 			return false;
 		}
 
-		public static IList<Item> GetVanillaChestInventory(int x, int y) {
+		public static Item[] GetVanillaChestInventory(int x, int y) {
 			if (AndroUtilityMethods.TryGetChest(x, y, out int chestNum))
 				return Main.chest[chestNum]?.item;
 

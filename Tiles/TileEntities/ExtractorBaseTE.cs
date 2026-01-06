@@ -144,8 +144,7 @@ namespace TerrariaAutomations.Tiles.TileEntities {
                     }
 
                     GetChests(out List<int> storageChests);
-                    List<IList<Item>> inventories = storageChests.Where(c => Main.chest[c] != null && (Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(c) == -1)).Select(c => (IList<Item>)Main.chest[c].item).ToList();
-
+                    List<Item[]> inventories = storageChests.Where(c => Main.chest[c] != null && (Main.netMode == NetmodeID.SinglePlayer || Chest.UsingChest(c) == -1)).Select(c => Main.chest[c].item).ToList();
                     if (StorageNetwork.TryGetStorageInventories(Position.X, Position.Y, out List<StorageInfo> storages)) {
                         inventories.AddRange(
                             storages.Where(s => s.CanDepositItemsTo).Select(s => s.Inventory)

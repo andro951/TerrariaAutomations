@@ -146,7 +146,9 @@ namespace TerrariaAutomations.Tiles {
 				if (!StorageNetwork.TryGetStorageInventories(i, j, out List<StorageInfo> storages))
 					return;
 
-				foreach (IList<Item> storage in storages.Where(s => s.CanWithdrawItemsFrom).Select(s => s.Inventory)) {
+				List<Item[]> networkStorages = storages.Where(s => s.CanWithdrawItemsFrom).Select(s => s.Inventory).ToList();
+
+                foreach (Item[] storage in networkStorages) {
 					if (SelectPlacableBlock(storage, saplingOnly, out Item item)) {
 						itemToPlace = item;
 						break;
