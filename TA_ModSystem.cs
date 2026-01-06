@@ -15,15 +15,7 @@ namespace TerrariaAutomations
 {
     public class TA_ModSystem : ModSystem {
 		public override void AddRecipes() {
-			for (int i = 0; i < AndroMod.VanillaRecipeCount; i++) {
-				Recipe recipe = Main.recipe[i];
-				if (recipe.createItem.type == ItemID.ChlorophyteExtractinator) {
-					recipe.DisableRecipe();
-				}
-			}
-
-			Recipe.Create(ItemID.Extractinator).AddTile(TileID.Anvils).AddIngredient(ModContent.ItemType<WoodAutoExtractinator>()).AddRecipeGroup($"{AndroMod.ModName}:{AndroModSystem.AnyIronBar}", 18).Register();
-			Recipe.Create(ItemID.ChlorophyteExtractinator).AddTile(TileID.MythrilAnvil).AddIngredient(ModContent.ItemType<HellstoneAutoExtractinator>()).AddIngredient(ItemID.ChlorophyteBar, 18).Register();
+			TA_VanillaGlobalItem.OnAddRecipes();
 		}
 		public override void PostSetupContent() {
 			GlobalAutoExtractor.PostSetupContent();

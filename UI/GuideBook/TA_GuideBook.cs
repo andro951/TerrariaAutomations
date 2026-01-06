@@ -70,38 +70,6 @@ namespace TerrariaAutomations.UI.GuideBook {
                 ]),
             ];
 		}
-        private void AddListAndScrollbar(UIPanel topicPanel, out AM_UIList list) {
-            list = new();
-            list.Width.Set(0f, 1f);
-            list.Height.Set(0f, 1f);
-            list.ListPadding = 5f;
-            list.ManualSortMethod = (List<UIElement> elements) => { };
-            list.FilterMethod = (UIElement el) => {
-                if (_searchString == null || _searchString == "")
-                    return true;
-
-                if (el is ISearchableUIElement searchableElement) {
-                    foreach (string txt in searchableElement.SearchStrings) {
-                        if (txt.Contains(_searchString)) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                return true;
-            };
-            topicPanel.Append(list);
-
-            UIScrollbar _scrollbar = new UIScrollbar();
-            _scrollbar.SetView(100f, 1000f);
-            _scrollbar.Height.Set(0f, 0.98f);
-            _scrollbar.HAlign = 1.03f;
-            _scrollbar.VAlign = 0.51f;
-            list.SetScrollbar(_scrollbar);
-            topicPanel.Append(_scrollbar);
-        }
 		private void IntroductionSetupTopic(UIPanel topicPanel) {
             AddListAndScrollbar(topicPanel, out AM_UIList list);
 
@@ -216,7 +184,7 @@ namespace TerrariaAutomations.UI.GuideBook {
             list.Add(MakeTitle("Crafting"));
             list.Add(GetScreenshotImage("WoodBreakerCrafting"));
             list.Add(GetScreenshotImage("IronBreakerCrafting"));
-            list.Add(MakeText("All Breakers are crafted from 8 bars and 50 stone blocks. (except wood which is wood instead of bars.)"));
+            list.Add(MakeText("All Breakers are crafted from 8 bars and 50 stone blocks. (except wood which is wood instead of bars and at a workbench instead of an anvil.)"));
         }
         private void BlockPlacersSetupTopic(UIPanel topicPanel) {
             AddListAndScrollbar(topicPanel, out AM_UIList list);
@@ -229,7 +197,7 @@ namespace TerrariaAutomations.UI.GuideBook {
             list.Add(MakeTitle("Crafting"));
             list.Add(GetScreenshotImage("WoodPlacerCrafting"));
             list.Add(GetScreenshotImage("IronPlacerCrafting"));
-            list.Add(MakeText("All Placers are crafted from 8 bars and 50 stone blocks. (except wood which is wood instead of bars.)"));
+            list.Add(MakeText("All Placers are crafted from 8 bars and 50 stone blocks. (except wood which is wood instead of bars and at a workbench instead of an anvil.)"));
         }
         private void PipesSetupTopic(UIPanel topicPanel) {
             AddListAndScrollbar(topicPanel, out AM_UIList list);
@@ -240,26 +208,9 @@ namespace TerrariaAutomations.UI.GuideBook {
             list.Add(MakeText("Pipes and the Pipe Wrench are sold by the Mechanic.  Pipes can also be crafted from iron / lead bars."));
             list.Add(GetScreenshotImage("AutoFisherNetwork"));
         }
-        private static Asset<Texture2D> GetVanillaItemTexture(int itemID) {
-            Main.instance.LoadItem(itemID);
-            return TextureAssets.Item[itemID];
-        }
-        private static Asset<Texture2D> GetModItemTexture(int itemID) {
-            return ModContent.Request<Texture2D>(
-                ItemLoader.GetItem(itemID).Texture
-            );
-        }
-        private static SearchableUIText MakeTitle(string title) => new SearchableUIText(title, 1f, true);
-		private static SearchableUIText MakeText(string text) => new SearchableUIText(text);
-        private static SearchableUIText MakeTextButton(string text, Action<UIMouseEvent, UIElement> onClick) {
-            SearchableUIText panel = new(text);
-			panel.OnLeftClick += (me, e) => onClick(me, e);
-			panel.TextColor = new(255, 92, 58);
-			return panel;
-		}
-		private static UIText MakeNewLine() => new UIText("");
+        
 		public static UIImage GetScreenshotImage(string screenshotName) {
-			Asset<Texture2D> asset = ModContent.Request<Texture2D>($"TerrariaAutomations/Content/Guidebook/Screenshots/{screenshotName}", AssetRequestMode.ImmediateLoad);
+			Asset<Texture2D> asset = ModContent.Request<Texture2D>($"TerrariaAutomations/Content/GuideBook/Screenshots/{screenshotName}", AssetRequestMode.ImmediateLoad);
 			UIImage image = new UIImage(asset);
 			return image;
 		}

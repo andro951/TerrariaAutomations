@@ -9,7 +9,8 @@ using Terraria.ModLoader;
 namespace TerrariaAutomations.Items {
 	public class WoodBlockPlacer : BlockPlacer {
 		protected override int PrimaryMaterial => ItemID.Wood;
-		protected override List<(int, int)> craftingMaterials => new() {
+        protected override ushort recipeTileID => TileID.WorkBenches;
+        protected override List<(int, int)> craftingMaterials => new() {
 			(ItemID.StoneBlock, 50)
 		};
 

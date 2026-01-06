@@ -88,11 +88,11 @@ namespace TerrariaAutomations.Common.Globals
 		private static bool ShouldDisplayChestIndicators(int chestX, int chestY, bool remove = false, TileObjectData data = null) {
 			Tile tile = Main.tile[chestX, chestY];
 			if (data == null) {
-				if (GlobalAutoExtractor.IsExtractinator(tile.TileType))
+				if (GlobalExtractorBase.IsExtractorTile(tile.TileType))
 					return true;
 			}
 			else if (data.Height != 2 || data.Width != 2) {
-				if (!GlobalAutoExtractor.IsExtractinator(tile.TileType))
+				if (!GlobalExtractorBase.IsExtractorTile(tile.TileType))
 					return false;
 			}
 
@@ -133,14 +133,14 @@ namespace TerrariaAutomations.Common.Globals
 			return true;
 		}
 		private static Vector2 GetTileSpecificOffset(int tileType) {
-			if (GlobalAutoExtractor.IsExtractinator(tileType))
-				return GlobalAutoExtractor.GetOffset(tileType);
+			if (GlobalExtractorBase.IsExtractorTile(tileType))
+				return GlobalExtractorBase.GetChestIndicatorOffset(tileType);
 
 			return Vector2.Zero;
 		}
 
 		public static bool ValidTileTypeForStorageChest(int tileType) {
-			if (GlobalAutoExtractor.IsExtractinator(tileType))
+			if (GlobalExtractorBase.IsExtractorTile(tileType))
 				return false;
 
 			if (Main.tileContainer[tileType])

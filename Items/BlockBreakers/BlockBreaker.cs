@@ -43,8 +43,9 @@ namespace TerrariaAutomations.Items {
 			Item.consumable = true;
 		}
 		protected virtual void ModifyRecipe(Recipe recipe) { }
-		public override void AddRecipes() {
-			Recipe recipe = CreateRecipe().AddTile(TileID.Anvils);
+		protected virtual ushort recipeTileID => TileID.Anvils;
+        public override void AddRecipes() {
+			Recipe recipe = CreateRecipe().AddTile(recipeTileID);
 			foreach ((int type, int stack) material in CraftingMaterials) {
 				recipe.AddIngredient(material.type, material.stack);
 			}

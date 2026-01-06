@@ -752,7 +752,7 @@ namespace TerrariaAutomations.TileData.Pipes {
 		private static bool CheckForChestTopLeft(int X, int Y, int chestNum) {
 			Tile tile = Main.tile[X, Y];
 			if (Main.tileContainer[tile.TileType]) {
-				if (GlobalAutoExtractor.IsExtractinator(tile.TileType)) {
+				if (GlobalExtractorBase.IsExtractorTile(tile.TileType)) {
 					PlaceStorageTile(X, Y, GetVanillaChestInventory, CanUseChest, StorageType.WithdrawlOnlyNoDeposit);
 				}
 				else {

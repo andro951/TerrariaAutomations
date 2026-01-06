@@ -9,11 +9,13 @@ using TerrariaAutomations.Tiles.TileEntities;
 using Terraria.DataStructures;
 
 namespace TerrariaAutomations.Tiles {
-    public abstract class AutoExtractorTile : TA_ModTile {
+    public abstract class ExtractorBaseTile : TA_ModTile {
+        public abstract float UseSpeedMultiplier { get; }
+    }
+    public abstract class AutoExtractorTile : ExtractorBaseTile {
 		public abstract AutoExtractinatorTE NewEntity { get; }
 		public abstract Func<int> MyItemType { get; }
         public abstract int Tier { get; }
-        public abstract float UseSpeedMultiplier { get; }
 		public override void SetStaticDefaults() {
             // Properties
             Main.tileFrameImportant[Type] = true;

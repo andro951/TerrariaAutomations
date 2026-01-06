@@ -31,12 +31,14 @@ namespace TerrariaAutomations
 			Instance = this;
 			AddNonLoadedContent();
 
-			hooks.Add(new(GlobalAutoExtractor.OnTileRightClickInfo, GlobalAutoExtractor.TileLoaderRightClickDetour));
+			hooks.Add(new(GlobalExtractorBase.OnTileRightClickInfo, GlobalExtractorBase.TileLoaderRightClickDetour));
 			foreach (Hook hook in hooks) {
 				hook.Apply();
 			}
 
-			TA_LocalizationData.RegisterSDataPackage();
+			GlobalExtractorBase.RegisterHooks();
+
+            TA_LocalizationData.RegisterSDataPackage();
 		}
 		private void AddNonLoadedContent() {
 			IEnumerable<Type> types = null;
